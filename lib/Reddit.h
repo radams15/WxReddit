@@ -15,6 +15,9 @@
 extern "C"{
 #endif
 
+#define AUTHENTICATED 1
+#define UNAUTHENTICATED 0
+
 typedef struct Reddit{
     const char* username;
     int authenticated;
@@ -34,6 +37,8 @@ Reddit_t* reddit_new_with_token(const char *username, const char* token);
 int reddit_get_posts_hot(Reddit_t* reddit, size_t limit, const char* before, post_cb callback, void* ptr);
 
 List_t* reddit_get_subbed_list(Reddit_t* reddit);
+
+int reddit_get_login_status(Reddit_t* reddit);
 
 int subreddit_get_posts(Reddit_t* reddit, Subreddit_t* subreddit, const char* type, size_t limit, const char* before, post_cb callback, void* ptr);
 

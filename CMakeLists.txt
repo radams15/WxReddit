@@ -10,7 +10,13 @@ include(${wxWidgets_USE_FILE})
 
 #set(CMAKE_OSX_ARCHITECTURES ppc;x86_64)
 
-add_executable(WxReddit MACOSX_BUNDLE main.cpp MainApp.cpp MainFrame.cpp Table.cpp Util.cpp MainFrameCust.cpp)
+set(SOURCE main.cpp MainApp.cpp MainFrame.cpp Table.cpp Util.cpp MainFrameCust.cpp)
+
+if(APPLE)
+    set(SOURCE ${SOURCE} MacOsSpecific.mm)
+endif()
+
+add_executable(WxReddit MACOSX_BUNDLE ${SOURCE})
 
 #set_target_properties(WxReddit PROPERTIES
 #        BUNDLE True

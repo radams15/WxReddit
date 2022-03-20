@@ -9,46 +9,26 @@
 
 ///////////////////////////////////////////////////////////////////////////
 
+BEGIN_EVENT_TABLE( MainFrame, wxFrame )
+	EVT_ACTIVATE_APP( MainFrame::_wxFB_MainFrameOnActivate )
+	EVT_COMBOBOX( wxID_ANY, MainFrame::_wxFB_SubBoxOnCombobox )
+	EVT_BUTTON( wxID_ANY, MainFrame::_wxFB_MoreButtonOnButtonClick )
+END_EVENT_TABLE()
+
 MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 
-	m_scrolledWindow1 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
+	m_scrolledWindow1 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxVSCROLL );
 	m_scrolledWindow1->SetScrollRate( 5, 5 );
-	wxBoxSizer* bSizer4;
-	bSizer4 = new wxBoxSizer( wxVERTICAL );
-
-	MainGrid = new wxGrid( m_scrolledWindow1, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-
-	// Grid
-	MainGrid->CreateGrid( 5, 5 );
-	MainGrid->EnableEditing( false );
-	MainGrid->EnableGridLines( true );
-	MainGrid->EnableDragGridSize( false );
-	MainGrid->SetMargins( 0, 0 );
-
-	// Columns
-	MainGrid->EnableDragColMove( false );
-	MainGrid->EnableDragColSize( true );
-	MainGrid->SetColLabelAlignment( wxALIGN_CENTER, wxALIGN_CENTER );
-
-	// Rows
-	MainGrid->EnableDragRowSize( true );
-	MainGrid->SetRowLabelAlignment( wxALIGN_CENTER, wxALIGN_CENTER );
-
-	// Label Appearance
-
-	// Cell Defaults
-	MainGrid->SetDefaultCellAlignment( wxALIGN_LEFT, wxALIGN_TOP );
-	bSizer4->Add( MainGrid, 0, wxALL|wxEXPAND, 5 );
+	PostBox = new wxBoxSizer( wxVERTICAL );
 
 
-	m_scrolledWindow1->SetSizer( bSizer4 );
+	m_scrolledWindow1->SetSizer( PostBox );
 	m_scrolledWindow1->Layout();
-	bSizer4->Fit( m_scrolledWindow1 );
+	PostBox->Fit( m_scrolledWindow1 );
 	bSizer3->Add( m_scrolledWindow1, 1, wxEXPAND | wxALL, 5 );
 
 
@@ -66,18 +46,44 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 
 	this->Centre( wxBOTH );
-
-	// Connect Events
-	this->Connect( wxEVT_ACTIVATE_APP, wxActivateEventHandler( MainFrame::MainFrameOnActivate ) );
-	SubBox->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( MainFrame::SubBoxOnCombobox ), NULL, this );
-	MoreButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::MoreButtonOnButtonClick ), NULL, this );
 }
 
 MainFrame::~MainFrame()
 {
-	// Disconnect Events
-	this->Disconnect( wxEVT_ACTIVATE_APP, wxActivateEventHandler( MainFrame::MainFrameOnActivate ) );
-	SubBox->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( MainFrame::SubBoxOnCombobox ), NULL, this );
-	MoreButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MainFrame::MoreButtonOnButtonClick ), NULL, this );
+}
 
+BEGIN_EVENT_TABLE( PostPanel, wxPanel )
+	EVT_BUTTON( wxID_ANY, PostPanel::_wxFB_GoButtonOnButtonClick )
+END_EVENT_TABLE()
+
+PostPanel::PostPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxPanel( parent, id, pos, size, style, name )
+{
+	wxBoxSizer* bSizer4;
+	bSizer4 = new wxBoxSizer( wxVERTICAL );
+
+	MainImage = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer4->Add( MainImage, 3, wxALL, 5 );
+
+	TitleLabel = new wxStaticText( this, wxID_ANY, wxT("Title"), wxDefaultPosition, wxDefaultSize, 0 );
+	TitleLabel->Wrap( -1 );
+	bSizer4->Add( TitleLabel, 1, wxALL, 5 );
+
+	AuthorLabel = new wxStaticText( this, wxID_ANY, wxT("Author"), wxDefaultPosition, wxDefaultSize, 0 );
+	AuthorLabel->Wrap( -1 );
+	bSizer4->Add( AuthorLabel, 1, wxALL, 5 );
+
+	SubredditLabel = new wxStaticText( this, wxID_ANY, wxT("Subreddit"), wxDefaultPosition, wxDefaultSize, 0 );
+	SubredditLabel->Wrap( -1 );
+	bSizer4->Add( SubredditLabel, 1, wxALL, 5 );
+
+	GoButton = new wxButton( this, wxID_ANY, wxT("Go"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer4->Add( GoButton, 0, wxALL, 5 );
+
+
+	this->SetSizer( bSizer4 );
+	this->Layout();
+}
+
+PostPanel::~PostPanel()
+{
 }

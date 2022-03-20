@@ -9,14 +9,13 @@
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
+#include <wx/sizer.h>
+#include <wx/gdicmn.h>
+#include <wx/scrolwin.h>
+#include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/string.h>
-#include <wx/font.h>
-#include <wx/grid.h>
-#include <wx/gdicmn.h>
-#include <wx/sizer.h>
-#include <wx/scrolwin.h>
 #include <wx/statusbr.h>
 #include <wx/combobox.h>
 #include <wx/button.h>
@@ -25,6 +24,9 @@
 #include <wx/icon.h>
 #include <wx/toolbar.h>
 #include <wx/frame.h>
+#include <wx/statbmp.h>
+#include <wx/stattext.h>
+#include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -34,11 +36,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 class MainFrame : public wxFrame
 {
+	DECLARE_EVENT_TABLE()
 	private:
 
+		// Private event handlers
+		void _wxFB_MainFrameOnActivate( wxActivateEvent& event ){ MainFrameOnActivate( event ); }
+		void _wxFB_SubBoxOnCombobox( wxCommandEvent& event ){ SubBoxOnCombobox( event ); }
+		void _wxFB_MoreButtonOnButtonClick( wxCommandEvent& event ){ MoreButtonOnButtonClick( event ); }
+
+
 	protected:
+		wxBoxSizer* bSizer3;
 		wxScrolledWindow* m_scrolledWindow1;
-		wxGrid* MainGrid;
 		wxStatusBar* m_statusBar1;
 		wxToolBar* m_toolBar1;
 		wxComboBox* SubBox;
@@ -51,10 +60,42 @@ class MainFrame : public wxFrame
 
 
 	public:
+		wxBoxSizer* PostBox;
 
 		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Reddit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 790,549 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~MainFrame();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class PostPanel
+///////////////////////////////////////////////////////////////////////////////
+class PostPanel : public wxPanel
+{
+	DECLARE_EVENT_TABLE()
+	private:
+
+		// Private event handlers
+		void _wxFB_GoButtonOnButtonClick( wxCommandEvent& event ){ GoButtonOnButtonClick( event ); }
+
+
+	protected:
+		wxButton* GoButton;
+
+		// Virtual event handlers, override them in your derived class
+		virtual void GoButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+
+
+	public:
+		wxStaticBitmap* MainImage;
+		wxStaticText* TitleLabel;
+		wxStaticText* AuthorLabel;
+		wxStaticText* SubredditLabel;
+
+		PostPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,155 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
+
+		~PostPanel();
 
 };
 

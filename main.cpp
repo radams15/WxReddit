@@ -10,7 +10,8 @@
 #include "SECRETS.h"
 
 int main(int argc, char** argv) {
-	Reddit_t* reddit = reddit_new_with_token(USERNAME, TOKEN);
+	Reddit_t* reddit = reddit_new(USERNAME, PASSWD, CID, SECRET);
+	//Reddit_t* reddit = reddit_new_with_token(USERNAME, TOKEN);
 
     if(!reddit->authenticated){
         fprintf(stderr, "Failed to login!\n");
