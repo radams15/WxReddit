@@ -16,17 +16,18 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/string.h>
-#include <wx/statusbr.h>
-#include <wx/combobox.h>
-#include <wx/button.h>
+#include <wx/panel.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/stattext.h>
+#include <wx/statbmp.h>
+#include <wx/notebook.h>
+#include <wx/statusbr.h>
+#include <wx/combobox.h>
+#include <wx/button.h>
 #include <wx/toolbar.h>
 #include <wx/frame.h>
-#include <wx/statbmp.h>
-#include <wx/stattext.h>
-#include <wx/panel.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -47,7 +48,14 @@ class MainFrame : public wxFrame
 
 	protected:
 		wxBoxSizer* bSizer3;
+		wxNotebook* m_notebook1;
+		wxPanel* m_panel1;
 		wxScrolledWindow* m_scrolledWindow1;
+		wxPanel* m_panel2;
+		wxScrolledWindow* m_scrolledWindow2;
+		wxStaticText* PostTitle;
+		wxStaticBitmap* PostPic;
+		wxStaticText* PostContent;
 		wxStatusBar* m_statusBar1;
 		wxToolBar* m_toolBar1;
 		wxComboBox* SubBox;
@@ -88,7 +96,7 @@ class PostPanel : public wxPanel
 
 
 	public:
-		wxStaticBitmap* MainImage;
+		wxStaticBitmap* FeedThumb;
 		wxStaticText* TitleLabel;
 		wxStaticText* AuthorLabel;
 		wxStaticText* SubredditLabel;

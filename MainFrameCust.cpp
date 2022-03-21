@@ -15,6 +15,10 @@ void adder(Post_t* post, void* ptr){
 void set_unified_toolbar(void* ptr);
 #endif
 
+#ifdef __WXGTK3__
+extern "C" void set_unified_toolbar(void* winptr);
+#endif
+
 MainFrameCust::MainFrameCust(Reddit_t* reddit, wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : MainFrame(parent, id, title, pos, size, style){
     this->reddit = reddit;
 
@@ -22,7 +26,12 @@ MainFrameCust::MainFrameCust(Reddit_t* reddit, wxWindow* parent, wxWindowID id, 
     NSWindow* win = MacGetTopLevelWindowRef();
     set_unified_toolbar((void*)win);
 #endif
-	reddit_get_posts_hot(reddit, -1, NULL, adder, this);
+
+#ifdef __WXGTK3__
+    set_unified_toolbar(wxWindow::GetHandle());
+#endif
+
+    reddit_get_posts_hot(reddit, -1, NULL, adder, this);
 
     LoadSubs();
 
@@ -30,7 +39,7 @@ MainFrameCust::MainFrameCust(Reddit_t* reddit, wxWindow* parent, wxWindowID id, 
 }
 
 void MainFrameCust::MainFrameOnActivate( wxActivateEvent& event ) {
-	printf("OK!\n");
+
 }
 
 void MainFrameCust::SubBoxOnCombobox(wxCommandEvent &event) {
@@ -88,17 +97,19 @@ void MainFrameCust::NewPostPanel(Post_t *post) {
     PostBox->Add(out, 1, wxEXPAND, 0);
 
     m_scrolledWindow1->GetParent()->Layout();
-    //out->SetFocus();
 }
 
 void MainFrameCust::Refresh() {
     PostBox->Layout();
     bSizer3->Layout();
 
-    //PostBox->Fit( m_scrolledWindow1 );
-
     m_scrolledWindow1->SetSizer( PostBox );
     m_scrolledWindow1->FitInside();
+}
+
+void MainFrameCust::LoadPost(Post_t* post) {
+    PostTitle->SetLabel(post->title);
+    PostContent->SetLabel(post->text);
 }
 
 PostPanelCust::PostPanelCust(wxWindow * parent, Post_t* post) : PostPanel(parent){
@@ -110,5 +121,5 @@ PostPanelCust::PostPanelCust(wxWindow * parent, Post_t* post) : PostPanel(parent
 }
 
 void PostPanelCust::GoButtonOnButtonClick(wxCommandEvent &event) {
-    printf("Go %s\n", post->title);
+    ((MainFrameCust*) m_parent)->LoadPost(post);
 }

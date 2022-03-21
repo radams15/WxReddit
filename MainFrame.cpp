@@ -21,7 +21,12 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 
-	m_scrolledWindow1 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxVSCROLL );
+	m_notebook1 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	m_panel1 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer( wxVERTICAL );
+
+	m_scrolledWindow1 = new wxScrolledWindow( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxVSCROLL );
 	m_scrolledWindow1->SetScrollRate( 5, 5 );
 	PostBox = new wxBoxSizer( wxVERTICAL );
 
@@ -29,7 +34,48 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_scrolledWindow1->SetSizer( PostBox );
 	m_scrolledWindow1->Layout();
 	PostBox->Fit( m_scrolledWindow1 );
-	bSizer3->Add( m_scrolledWindow1, 1, wxEXPAND | wxALL, 5 );
+	bSizer6->Add( m_scrolledWindow1, 1, wxEXPAND | wxALL, 5 );
+
+
+	m_panel1->SetSizer( bSizer6 );
+	m_panel1->Layout();
+	bSizer6->Fit( m_panel1 );
+	m_notebook1->AddPage( m_panel1, wxT("Feed"), false );
+	m_panel2 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* bSizer8;
+	bSizer8 = new wxBoxSizer( wxVERTICAL );
+
+	m_scrolledWindow2 = new wxScrolledWindow( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
+	m_scrolledWindow2->SetScrollRate( 5, 5 );
+	wxBoxSizer* bSizer9;
+	bSizer9 = new wxBoxSizer( wxVERTICAL );
+
+	PostTitle = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Post Title"), wxDefaultPosition, wxDefaultSize, 0 );
+	PostTitle->Wrap( -1 );
+	PostTitle->SetFont( wxFont( 24, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Lucida Grande") ) );
+
+	bSizer9->Add( PostTitle, 0, wxALL, 5 );
+
+	PostPic = new wxStaticBitmap( m_scrolledWindow2, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer9->Add( PostPic, 0, wxALL, 5 );
+
+	PostContent = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Content"), wxDefaultPosition, wxDefaultSize, 0 );
+	PostContent->Wrap( -1 );
+	bSizer9->Add( PostContent, 0, wxALL, 5 );
+
+
+	m_scrolledWindow2->SetSizer( bSizer9 );
+	m_scrolledWindow2->Layout();
+	bSizer9->Fit( m_scrolledWindow2 );
+	bSizer8->Add( m_scrolledWindow2, 1, wxEXPAND | wxALL, 5 );
+
+
+	m_panel2->SetSizer( bSizer8 );
+	m_panel2->Layout();
+	bSizer8->Fit( m_panel2 );
+	m_notebook1->AddPage( m_panel2, wxT("Post"), false );
+
+	bSizer3->Add( m_notebook1, 1, wxEXPAND | wxALL, 5 );
 
 
 	this->SetSizer( bSizer3 );
@@ -61,8 +107,8 @@ PostPanel::PostPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 
-	MainImage = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer4->Add( MainImage, 3, wxALL, 5 );
+	FeedThumb = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer4->Add( FeedThumb, 3, wxALL, 5 );
 
 	TitleLabel = new wxStaticText( this, wxID_ANY, wxT("Title"), wxDefaultPosition, wxDefaultSize, 0 );
 	TitleLabel->Wrap( -1 );

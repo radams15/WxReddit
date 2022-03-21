@@ -25,6 +25,8 @@ public:
     void Refresh();
 
     MainFrameCust( Reddit_t* reddit, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Reddit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 790,549 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+
+    void LoadPost(Post_t* post);
 };
 
 class PostPanelCust : public PostPanel{
