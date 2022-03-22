@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
 project(WxReddit)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -19,16 +19,21 @@ if(APPLE)
 endif()
 
 if(UNIX AND NOT APPLE)
-    pkg_check_modules(GTK gtk+-3.0 REQUIRED)
-    set(SOURCE ${SOURCE} GtkSpecific.c)
+    pkg_check_modules(GTK3 gtk+-3.0)
+    pkg_check_modules(GTK2 gtk+-2.0)
+
+if(${GTK3_FOUND})
+	set(SOURCE ${SOURCE} GtkSpecific.c)
+endif()
+
 endif()
 
 add_executable(WxReddit MACOSX_BUNDLE ${SOURCE})
 
-if(UNIX AND NOT APPLE)
-    target_include_directories(WxReddit PRIVATE ${GTK_INCLUDE_DIRS})
-    target_link_directories(WxReddit PRIVATE ${GTK_LIBRARIES})
-    set(LIBS ${LIBS} ${GTK_LIBRARIES})
+if(${GTK3_FOUND})
+    target_include_directories(WxReddit PRIVATE ${GTK3_INCLUDE_DIRS})
+    target_link_directories(WxReddit PRIVATE ${GTK3_LIBRARIES})
+    set(LIBS ${LIBS} ${GTK3_LIBRARIES})
 endif()
 
 

@@ -10,7 +10,7 @@ MainApp::MainApp(Reddit_t* reddit) : wxApp(){
 }
 
 bool MainApp::OnInit() {
-    MainFrameCust *frame = new MainFrameCust(reddit, nullptr);
+    MainFrameCust *frame = new MainFrameCust(reddit, NULL);
     frame->Show(true);
 
     return true;

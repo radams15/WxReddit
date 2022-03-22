@@ -32,8 +32,8 @@ void remove_from_parent(GtkWidget* widget){
     }
 }
 
-void set_unified_toolbar(void* winptr){
-    GtkWidget* win = (GtkWidget*) winptr;
+void tweak(void* window){
+    GtkWidget* win = (GtkWidget*) window;
 
     GtkToolbar* toolbar = g_object_ref(find_toolbar(win));
     remove_from_parent(GTK_WIDGET(toolbar));

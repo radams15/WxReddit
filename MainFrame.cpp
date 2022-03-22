@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b)
+// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b3)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -40,7 +40,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_panel1->SetSizer( bSizer6 );
 	m_panel1->Layout();
 	bSizer6->Fit( m_panel1 );
-	m_notebook1->AddPage( m_panel1, wxT("Feed"), false );
+	m_notebook1->AddPage( m_panel1, wxT("Feed"), true );
 	m_panel2 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
@@ -52,16 +52,16 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 	PostTitle = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Post Title"), wxDefaultPosition, wxDefaultSize, 0 );
 	PostTitle->Wrap( -1 );
-	PostTitle->SetFont( wxFont( 24, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Lucida Grande") ) );
+	PostTitle->SetFont( wxFont( 24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
-	bSizer9->Add( PostTitle, 0, wxALL, 5 );
+	bSizer9->Add( PostTitle, 0, wxALL|wxEXPAND, 5 );
 
 	PostPic = new wxStaticBitmap( m_scrolledWindow2, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer9->Add( PostPic, 0, wxALL, 5 );
+	bSizer9->Add( PostPic, 0, wxALL|wxEXPAND, 5 );
 
 	PostContent = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Content"), wxDefaultPosition, wxDefaultSize, 0 );
 	PostContent->Wrap( -1 );
-	bSizer9->Add( PostContent, 0, wxALL, 5 );
+	bSizer9->Add( PostContent, 0, wxALL|wxEXPAND, 5 );
 
 
 	m_scrolledWindow2->SetSizer( bSizer9 );
@@ -80,7 +80,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 	this->SetSizer( bSizer3 );
 	this->Layout();
-	m_statusBar1 = this->CreateStatusBar( 1, wxSTB_SIZEGRIP, wxID_ANY );
+	m_statusBar1 = this->CreateStatusBar( 1, 0, wxID_ANY );
 	m_toolBar1 = this->CreateToolBar( wxTB_HORIZONTAL, wxID_ANY );
 	SubBox = new wxComboBox( m_toolBar1, wxID_ANY, wxT("All"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_READONLY );
 	SubBox->Append( wxT("All") );

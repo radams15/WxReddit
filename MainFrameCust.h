@@ -32,8 +32,9 @@ public:
 class PostPanelCust : public PostPanel{
 private:
     Post_t* post;
+    wxWindow* window;
 protected:
     void GoButtonOnButtonClick( wxCommandEvent& event );
 public:
-    PostPanelCust(wxWindow* parent, Post_t* post);
+    PostPanelCust(wxWindow* parent, wxWindow* window, Post_t* post);
 };

@@ -36,11 +36,11 @@ wxString Table::GetValue(int row, int col) {
 
 	switch(col){
 		case 0:
-			return post->title;
+			return toString(post->title);
 		case 1:
-			return post->author;
+			return toString(post->author);
 		case 2:
-			return post->subreddit;
+			return toString(post->subreddit);
 	}
     }
 
