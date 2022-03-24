@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b3)
+// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -22,6 +22,7 @@
 #include <wx/icon.h>
 #include <wx/stattext.h>
 #include <wx/statbmp.h>
+#include <wx/treectrl.h>
 #include <wx/notebook.h>
 #include <wx/statusbr.h>
 #include <wx/combobox.h>
@@ -56,6 +57,7 @@ class MainFrame : public wxFrame
 		wxStaticText* PostTitle;
 		wxStaticBitmap* PostPic;
 		wxStaticText* PostContent;
+		wxTreeCtrl* CommentControl;
 		wxStatusBar* m_statusBar1;
 		wxToolBar* m_toolBar1;
 		wxComboBox* SubBox;

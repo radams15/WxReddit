@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b3)
+// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -40,13 +40,16 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_panel1->SetSizer( bSizer6 );
 	m_panel1->Layout();
 	bSizer6->Fit( m_panel1 );
-	m_notebook1->AddPage( m_panel1, wxT("Feed"), true );
+	m_notebook1->AddPage( m_panel1, wxT("Feed"), false );
 	m_panel2 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 
 	m_scrolledWindow2 = new wxScrolledWindow( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
 	m_scrolledWindow2->SetScrollRate( 5, 5 );
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxVERTICAL );
+
 	wxBoxSizer* bSizer9;
 	bSizer9 = new wxBoxSizer( wxVERTICAL );
 
@@ -64,16 +67,22 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	bSizer9->Add( PostContent, 0, wxALL|wxEXPAND, 5 );
 
 
-	m_scrolledWindow2->SetSizer( bSizer9 );
+	bSizer7->Add( bSizer9, 1, wxEXPAND, 5 );
+
+	CommentControl = new wxTreeCtrl( m_scrolledWindow2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE );
+	bSizer7->Add( CommentControl, 4, wxALL|wxEXPAND, 5 );
+
+
+	m_scrolledWindow2->SetSizer( bSizer7 );
 	m_scrolledWindow2->Layout();
-	bSizer9->Fit( m_scrolledWindow2 );
+	bSizer7->Fit( m_scrolledWindow2 );
 	bSizer8->Add( m_scrolledWindow2, 1, wxEXPAND | wxALL, 5 );
 
 
 	m_panel2->SetSizer( bSizer8 );
 	m_panel2->Layout();
 	bSizer8->Fit( m_panel2 );
-	m_notebook1->AddPage( m_panel2, wxT("Post"), false );
+	m_notebook1->AddPage( m_panel2, wxT("Post"), true );
 
 	bSizer3->Add( m_notebook1, 1, wxEXPAND | wxALL, 5 );
 

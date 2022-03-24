@@ -6,9 +6,37 @@
 
 #include <cstdio>
 
-void adder(Post_t* post, void* ptr){
+void post_adder(Post_t* post, void* ptr){
     MainFrameCust* frame = (MainFrameCust*) ptr;
     frame->NewPostPanel(post);
+}
+
+void comment_adder(Comment_t* comment, void* ptr, int is_title){
+    MainFrameCust* frame = (MainFrameCust*) ptr;
+
+    if(is_title){
+        frame->AddPostMainComment(comment);
+    }else{
+        frame->AddComment(comment, frame->comment_root);
+    }
+}
+
+void MainFrameCust::AddComment(Comment_t *comment, wxTreeItemId parent) {
+    if(parent != NULL){
+        wxTreeItemId id = CommentControl->AppendItem(parent, comment->body);
+
+        for(int i=0 ; i<comment->no_children ; i++){
+            AddComment(comment->children[i], id);
+        }
+    }
+}
+
+void MainFrameCust::AddPostMainComment(Comment *comment) {
+    comment_root = CommentControl->AddRoot(comment->title);
+
+    printf("Image: %s\n", comment->thumbnail);
+
+    CommentControl->Expand(comment_root);
 }
 
 extern "C" void tweak(void* window);
@@ -24,7 +52,7 @@ MainFrameCust::MainFrameCust(Reddit_t* reddit, wxWindow* parent, wxWindowID id, 
     tweak((void*) wxWindow::GetHandle());
 #endif
 
-    reddit_get_posts_hot(reddit, -1, NULL, adder, this);
+    reddit_get_posts_hot(reddit, -1, NULL, post_adder, this);
 
     LoadSubs();
 
@@ -42,12 +70,12 @@ void MainFrameCust::SubBoxOnCombobox(wxCommandEvent &event) {
     posts.clear();
 
     if(i == 0){
-        reddit_get_posts_hot(reddit, -1, NULL, adder, this);
+        reddit_get_posts_hot(reddit, -1, NULL, post_adder, this);
 
     }else {
         Subreddit_t* sub = (Subreddit_t*) subs->data[i-1];
 
-        subreddit_get_posts(reddit, sub, "hot", -1, NULL, adder, this);
+        subreddit_get_posts(reddit, sub, "hot", -1, NULL, post_adder, this);
     }
 
     Refresh();
@@ -71,12 +99,12 @@ void MainFrameCust::MoreButtonOnButtonClick(wxCommandEvent &event) {
     const char* fullname = post_fullname(prev);
 
     if(i == 0 || i == -1){
-        reddit_get_posts_hot(reddit, -1, fullname, adder, this);
+        reddit_get_posts_hot(reddit, -1, fullname, post_adder, this);
 
     }else {
         Subreddit_t* sub = (Subreddit_t*) subs->data[i-1];
 
-        subreddit_get_posts(reddit, sub, "hot", -1, fullname, adder, this);
+        subreddit_get_posts(reddit, sub, "hot", -1, fullname, post_adder, this);
     }
 
     Refresh();
@@ -101,8 +129,15 @@ void MainFrameCust::Refresh() {
 }
 
 void MainFrameCust::LoadPost(Post_t* post) {
+    if(comment_root != NULL) {
+        CommentControl->Delete(comment_root);
+        comment_root = NULL;
+    }
+
     PostTitle->SetLabel(toString(post->title));
     PostContent->SetLabel(toString(post->text));
+
+    post_get_comments(reddit, post, -1, NULL, comment_adder, this);
 }
 
 PostPanelCust::PostPanelCust(wxWindow* parent, wxWindow* window, Post_t* post) : PostPanel(parent){

@@ -20,11 +20,17 @@ protected:
 public:
     std::vector< Post_t* > posts;
 
+    wxTreeItemId comment_root = NULL;
+
     void NewPostPanel(Post_t* post);
 
     void Refresh();
 
     MainFrameCust( Reddit_t* reddit, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Reddit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 790,549 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+
+    void AddComment(Comment_t* comment, wxTreeItemId);
+
+    void AddPostMainComment(Comment* comment);
 
     void LoadPost(Post_t* post);
 };
