@@ -40,7 +40,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_panel1->SetSizer( bSizer6 );
 	m_panel1->Layout();
 	bSizer6->Fit( m_panel1 );
-	m_notebook1->AddPage( m_panel1, wxT("Feed"), false );
+	m_notebook1->AddPage( m_panel1, wxT("Feed"), true );
 	m_panel2 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
@@ -82,7 +82,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_panel2->SetSizer( bSizer8 );
 	m_panel2->Layout();
 	bSizer8->Fit( m_panel2 );
-	m_notebook1->AddPage( m_panel2, wxT("Post"), true );
+	m_notebook1->AddPage( m_panel2, wxT("Post"), false );
 
 	bSizer3->Add( m_notebook1, 1, wxEXPAND | wxALL, 5 );
 

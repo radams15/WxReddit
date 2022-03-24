@@ -1,0 +1,3 @@
+[submodule "lib/libreddit"]
+	path = lib/libreddit
+	url = https://github.com/radams15/libreddit

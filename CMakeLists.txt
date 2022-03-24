@@ -3,11 +3,12 @@ project(WxReddit)
 
 set(CMAKE_CXX_STANDARD 11)
 
-include_directories(lib)
 find_package(wxWidgets REQUIRED COMPONENTS core base adv)
 find_package(PkgConfig REQUIRED)
 
 include(${wxWidgets_USE_FILE})
+
+add_subdirectory(lib/libreddit)
 
 #set(CMAKE_OSX_ARCHITECTURES ppc;x86_64)
 
@@ -29,6 +30,8 @@ endif()
 endif()
 
 add_executable(WxReddit MACOSX_BUNDLE ${SOURCE})
+
+target_include_directories(WxReddit PRIVATE lib/libreddit/headers)
 
 if(${GTK3_FOUND})
     target_include_directories(WxReddit PRIVATE ${GTK3_INCLUDE_DIRS})
