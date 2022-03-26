@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b)
+// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b3)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -21,31 +21,31 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 
-	m_notebook1 = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	m_panel1 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	NoteBook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
+	FeedPanel = new wxPanel( NoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 
-	m_scrolledWindow1 = new wxScrolledWindow( m_panel1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxVSCROLL );
+	m_scrolledWindow1 = new wxScrolledWindow( FeedPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxVSCROLL );
 	m_scrolledWindow1->SetScrollRate( 5, 5 );
-	PostBox = new wxBoxSizer( wxVERTICAL );
+	PostBoxArea = new wxBoxSizer( wxVERTICAL );
 
 
-	m_scrolledWindow1->SetSizer( PostBox );
+	m_scrolledWindow1->SetSizer( PostBoxArea );
 	m_scrolledWindow1->Layout();
-	PostBox->Fit( m_scrolledWindow1 );
+	PostBoxArea->Fit( m_scrolledWindow1 );
 	bSizer6->Add( m_scrolledWindow1, 1, wxEXPAND | wxALL, 5 );
 
 
-	m_panel1->SetSizer( bSizer6 );
-	m_panel1->Layout();
-	bSizer6->Fit( m_panel1 );
-	m_notebook1->AddPage( m_panel1, wxT("Feed"), true );
-	m_panel2 = new wxPanel( m_notebook1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	FeedPanel->SetSizer( bSizer6 );
+	FeedPanel->Layout();
+	bSizer6->Fit( FeedPanel );
+	NoteBook->AddPage( FeedPanel, wxT("Feed"), true );
+	PostPanel = new wxPanel( NoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer8;
 	bSizer8 = new wxBoxSizer( wxVERTICAL );
 
-	m_scrolledWindow2 = new wxScrolledWindow( m_panel2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
+	m_scrolledWindow2 = new wxScrolledWindow( PostPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
 	m_scrolledWindow2->SetScrollRate( 5, 5 );
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
@@ -79,12 +79,12 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	bSizer8->Add( m_scrolledWindow2, 1, wxEXPAND | wxALL, 5 );
 
 
-	m_panel2->SetSizer( bSizer8 );
-	m_panel2->Layout();
-	bSizer8->Fit( m_panel2 );
-	m_notebook1->AddPage( m_panel2, wxT("Post"), false );
+	PostPanel->SetSizer( bSizer8 );
+	PostPanel->Layout();
+	bSizer8->Fit( PostPanel );
+	NoteBook->AddPage( PostPanel, wxT("Post"), false );
 
-	bSizer3->Add( m_notebook1, 1, wxEXPAND | wxALL, 5 );
+	bSizer3->Add( NoteBook, 1, wxEXPAND | wxALL, 5 );
 
 
 	this->SetSizer( bSizer3 );
@@ -107,11 +107,11 @@ MainFrame::~MainFrame()
 {
 }
 
-BEGIN_EVENT_TABLE( PostPanel, wxPanel )
-	EVT_BUTTON( wxID_ANY, PostPanel::_wxFB_GoButtonOnButtonClick )
+BEGIN_EVENT_TABLE( PostBox, wxPanel )
+	EVT_BUTTON( wxID_ANY, PostBox::_wxFB_GoButtonOnButtonClick )
 END_EVENT_TABLE()
 
-PostPanel::PostPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxPanel( parent, id, pos, size, style, name )
+PostBox::PostBox( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxPanel( parent, id, pos, size, style, name )
 {
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
@@ -139,6 +139,6 @@ PostPanel::PostPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, const
 	this->Layout();
 }
 
-PostPanel::~PostPanel()
+PostBox::~PostBox()
 {
 }

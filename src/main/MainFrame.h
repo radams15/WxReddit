@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b)
+// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b3)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -49,10 +49,10 @@ class MainFrame : public wxFrame
 
 	protected:
 		wxBoxSizer* bSizer3;
-		wxNotebook* m_notebook1;
-		wxPanel* m_panel1;
+		wxNotebook* NoteBook;
+		wxPanel* FeedPanel;
 		wxScrolledWindow* m_scrolledWindow1;
-		wxPanel* m_panel2;
+		wxPanel* PostPanel;
 		wxScrolledWindow* m_scrolledWindow2;
 		wxStaticText* PostTitle;
 		wxStaticBitmap* PostPic;
@@ -70,7 +70,7 @@ class MainFrame : public wxFrame
 
 
 	public:
-		wxBoxSizer* PostBox;
+		wxBoxSizer* PostBoxArea;
 
 		MainFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Reddit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 790,549 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
@@ -79,9 +79,9 @@ class MainFrame : public wxFrame
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-/// Class PostPanel
+/// Class PostBox
 ///////////////////////////////////////////////////////////////////////////////
-class PostPanel : public wxPanel
+class PostBox : public wxPanel
 {
 	DECLARE_EVENT_TABLE()
 	private:
@@ -103,9 +103,9 @@ class PostPanel : public wxPanel
 		wxStaticText* AuthorLabel;
 		wxStaticText* SubredditLabel;
 
-		PostPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,155 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
+		PostBox( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,155 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
 
-		~PostPanel();
+		~PostBox();
 
 };
 

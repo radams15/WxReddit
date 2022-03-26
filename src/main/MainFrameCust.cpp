@@ -66,7 +66,7 @@ void MainFrameCust::MainFrameOnActivate( wxActivateEvent& event ) {
 void MainFrameCust::SubBoxOnCombobox(wxCommandEvent &event) {
     int i = SubBox->GetSelection();
 
-    PostBox->Clear(true);
+    PostBoxArea->Clear(true);
     posts.clear();
 
     if(i == 0){
@@ -113,18 +113,18 @@ void MainFrameCust::MoreButtonOnButtonClick(wxCommandEvent &event) {
 void MainFrameCust::NewPostPanel(Post_t *post) {
     posts.push_back(post);
 
-    PostPanel* out = new PostPanelCust(m_scrolledWindow1, this, post);
+    PostBox* out = new PostBoxCust(m_scrolledWindow1, this, post);
 
-    PostBox->Add(out, 1, wxEXPAND, 0);
+    PostBoxArea->Add(out, 1, wxEXPAND, 0);
 
     m_scrolledWindow1->GetParent()->Layout();
 }
 
 void MainFrameCust::Refresh() {
-    PostBox->Layout();
+    PostBoxArea->Layout();
     bSizer3->Layout();
 
-    m_scrolledWindow1->SetSizer( PostBox );
+    m_scrolledWindow1->SetSizer( PostBoxArea );
     m_scrolledWindow1->FitInside();
 }
 
@@ -140,7 +140,7 @@ void MainFrameCust::LoadPost(Post_t* post) {
     post_get_comments(reddit, post, -1, NULL, comment_adder, this);
 }
 
-PostPanelCust::PostPanelCust(wxWindow* parent, wxWindow* window, Post_t* post) : PostPanel(parent){
+PostBoxCust::PostBoxCust(wxWindow* parent, wxWindow* window, Post_t* post) : PostBox(parent){
     this->post = post;
     this->window = window;
 
@@ -149,6 +149,6 @@ PostPanelCust::PostPanelCust(wxWindow* parent, wxWindow* window, Post_t* post) :
     SubredditLabel->SetLabel(toString(post->subreddit));
 }
 
-void PostPanelCust::GoButtonOnButtonClick(wxCommandEvent &event) {
+void PostBoxCust::GoButtonOnButtonClick(wxCommandEvent &event) {
     ((MainFrameCust*) window)->LoadPost(post);
 }

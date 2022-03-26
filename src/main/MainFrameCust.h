@@ -35,12 +35,12 @@ public:
     void LoadPost(Post_t* post);
 };
 
-class PostPanelCust : public PostPanel{
+class PostBoxCust : public PostBox{
 private:
     Post_t* post;
     wxWindow* window;
 protected:
     void GoButtonOnButtonClick( wxCommandEvent& event );
 public:
-    PostPanelCust(wxWindow* parent, wxWindow* window, Post_t* post);
+    PostBoxCust(wxWindow* parent, wxWindow* window, Post_t* post);
 };
