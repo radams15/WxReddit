@@ -14,13 +14,18 @@ protected:
     void SubBoxOnCombobox( wxCommandEvent& event );
     void MoreButtonOnButtonClick( wxCommandEvent& event );
 
+    void ExitBtnPressed( wxCommandEvent& event );
+    void GoSubBtnPressed( wxCommandEvent& event );
+    void NewSubBtnPressed( wxCommandEvent& event );
+    void AboutBtnPressed( wxCommandEvent& event );
+
     Reddit_t* reddit;
     List_t* subs;
 
 public:
     std::vector< Post_t* > posts;
 
-    wxTreeItemId comment_root = NULL;
+    wxTreeItemId comment_root;
 
     void NewPostPanel(Post_t* post);
 

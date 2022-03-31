@@ -12,7 +12,11 @@ MainApp::MainApp(Reddit_t* reddit) : wxApp(){
 }
 
 bool MainApp::OnInit() {
+#ifdef __WXGTK3__
     gtk_tweak_setup();
+#endif
+
+    wxInitAllImageHandlers();
 
     MainFrameCust *frame = new MainFrameCust(reddit, NULL);
     frame->Show(true);

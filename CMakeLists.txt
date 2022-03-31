@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project(WxReddit)
 
+cmake_policy(SET CMP0054 OLD)
+
 set(CMAKE_CXX_STANDARD 11)
 
 option(HEADERBAR "Uses unified titlebar and toolbar (OSX/Gtk3 Only)" ON)
@@ -33,8 +35,12 @@ if(UNIX AND NOT APPLE)
     pkg_check_modules(HANDY libhandy-1)
     pkg_check_modules(ADWAITA libadwaita-1)
 
+    find_package(Qt5 COMPONENTS Widgets)
+
 if(${GTK3_FOUND})
-	set(SOURCE ${SOURCE} src/main/specific/Gtk.c)
+	set(SOURCE ${SOURCE} src/main/specific/Gtk.c src/main/specific/Qt.cpp)
+elseif(${Qt5_FOUND})
+    set(SOURCE ${SOURCE} src/main/specific/Qt.cpp)
 endif()
 
 endif()
@@ -47,6 +53,8 @@ if(${GTK3_FOUND})
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${GTK3_INCLUDE_DIRS})
     set(LINK_DIRS ${LINK_DIRS} ${GTK3_LIBRARIES})
     set(LIBS ${LIBS} ${GTK3_LIBRARIES})
+elseif(${Qt5_FOUND})
+    set(LIBS ${LIBS} Qt5::Widgets)
 endif()
 
 if(HEADERBAR)
@@ -54,14 +62,14 @@ if(HEADERBAR)
     target_compile_definitions(WxReddit PUBLIC USE_HEADERBAR)
 endif()
 
-if(GNOME AND ${HANDY_FOUND})
+if("GNOME" AND "${HANDY_FOUND}")
     message("Using gnome theming (libhandy)")
     target_compile_definitions(WxReddit PUBLIC USE_HANDY)
 
     set(LIBS ${LIBS} ${HANDY_LIBRARIES})
     set(LINK_DIRS ${LINK_DIRS} ${HANDY_LIBRARIES})
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${HANDY_INCLUDE_DIRS})
-elseif(GNOME AND ${ADWAITA_FOUND})
+elseif("GNOME" AND "${ADWAITA_FOUND}")
     message("Using gnome theming (libadwaita)")
     target_compile_definitions(WxReddit PUBLIC USE_ADWAITA)
 
@@ -83,8 +91,8 @@ endif()
 #set_source_files_properties("${CMAKE_SOURCE_DIR}/res/MacTube.icns" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 #file(COPY "${CMAKE_SOURCE_DIR}/res/MacTube.icns" DESTINATION "MacTube.app/Contents/Resources")
 
-target_include_directories(WxReddit PRIVATE ${INCLUDE_DIRS})
-target_link_directories(WxReddit PRIVATE ${LINK_DIRS})
+include_directories(${INCLUDE_DIRS})
+link_directories(${LINK_DIRS})
 
 
-target_link_libraries(WxReddit reddit ${LIBS})
+target_link_libraries(WxReddit reddit request ${LIBS})

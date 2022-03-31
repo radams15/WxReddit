@@ -1,10 +1,14 @@
 #include "MainFrameCust.h"
 
+#include <wx/aboutdlg.h>
+
 #include "Table.h"
 
 #include "Util.h"
 
 #include <cstdio>
+
+extern "C" size_t req_get_dl(const char* url, const char* path, int use_proxy, const char* proxy, void* headers);
 
 void post_adder(Post_t* post, void* ptr){
     MainFrameCust* frame = (MainFrameCust*) ptr;
@@ -22,8 +26,8 @@ void comment_adder(Comment_t* comment, void* ptr, int is_title){
 }
 
 void MainFrameCust::AddComment(Comment_t *comment, wxTreeItemId parent) {
-    if(parent != NULL){
-        wxTreeItemId id = CommentControl->AppendItem(parent, comment->body);
+    if(parent){
+        wxTreeItemId id = CommentControl->AppendItem(parent, toString(comment->body));
 
         for(int i=0 ; i<comment->no_children ; i++){
             AddComment(comment->children[i], id);
@@ -32,9 +36,24 @@ void MainFrameCust::AddComment(Comment_t *comment, wxTreeItemId parent) {
 }
 
 void MainFrameCust::AddPostMainComment(Comment *comment) {
-    comment_root = CommentControl->AddRoot(comment->title);
+    comment_root = CommentControl->AddRoot(toString(comment->title));
 
-    printf("Image: %s\n", comment->thumbnail);
+    if(! comment->thumbnail){
+        return;
+    }
+
+    char file_name[256];
+    size_t secs = clock();
+    sprintf(file_name, "%d.jpg", secs);
+
+    req_get_dl(comment->thumbnail, file_name, 0, NULL, NULL);
+
+    wxImage* img = new wxImage;
+    img->LoadFile(toString((char*) file_name), wxBITMAP_TYPE_JPEG);
+
+    wxBitmap* bmp = new wxBitmap(*img, -1);
+
+    PostPic->SetBitmap(*bmp);
 
     CommentControl->Expand(comment_root);
 }
@@ -43,6 +62,8 @@ extern "C" void tweak(void* window);
 
 MainFrameCust::MainFrameCust(Reddit_t* reddit, wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : MainFrame(parent, id, title, pos, size, style) {
     this->reddit = reddit;
+	
+	comment_root = NULL;
 
 #ifdef MAC_OS_X_VERSION_10_10
     NSWindow* win = MacGetTopLevelWindowRef();
@@ -52,7 +73,11 @@ MainFrameCust::MainFrameCust(Reddit_t* reddit, wxWindow* parent, wxWindowID id, 
     tweak((void*) wxWindow::GetHandle());
 #endif
 
-    reddit_get_posts_hot(reddit, -1, NULL, post_adder, this);
+#ifdef __WXQT__
+    tweak((void*) GetQMainWindow());
+#endif
+
+    reddit_get_posts_hot(reddit, 100, NULL, post_adder, this);
 
     LoadSubs();
 
@@ -70,16 +95,17 @@ void MainFrameCust::SubBoxOnCombobox(wxCommandEvent &event) {
     posts.clear();
 
     if(i == 0){
-        reddit_get_posts_hot(reddit, -1, NULL, post_adder, this);
+        reddit_get_posts_hot(reddit, 100, NULL, post_adder, this);
 
     }else {
         Subreddit_t* sub = (Subreddit_t*) subs->data[i-1];
 
-        subreddit_get_posts(reddit, sub, "hot", -1, NULL, post_adder, this);
+        subreddit_get_posts(reddit, sub, "hot", 100, NULL, post_adder, this);
     }
 
     Refresh();
 }
+
 
 void MainFrameCust::LoadSubs() {
     subs = reddit_get_subbed_list(reddit);
@@ -99,12 +125,12 @@ void MainFrameCust::MoreButtonOnButtonClick(wxCommandEvent &event) {
     const char* fullname = post_fullname(prev);
 
     if(i == 0 || i == -1){
-        reddit_get_posts_hot(reddit, -1, fullname, post_adder, this);
+        reddit_get_posts_hot(reddit, 100, fullname, post_adder, this);
 
     }else {
         Subreddit_t* sub = (Subreddit_t*) subs->data[i-1];
 
-        subreddit_get_posts(reddit, sub, "hot", -1, fullname, post_adder, this);
+        subreddit_get_posts(reddit, sub, "hot", 100, fullname, post_adder, this);
     }
 
     Refresh();
@@ -129,7 +155,7 @@ void MainFrameCust::Refresh() {
 }
 
 void MainFrameCust::LoadPost(Post_t* post) {
-    if(comment_root != NULL) {
+    if(comment_root) {
         CommentControl->Delete(comment_root);
         comment_root = NULL;
     }
@@ -137,7 +163,39 @@ void MainFrameCust::LoadPost(Post_t* post) {
     PostTitle->SetLabel(toString(post->title));
     PostContent->SetLabel(toString(post->text));
 
-    post_get_comments(reddit, post, -1, NULL, comment_adder, this);
+    post_get_comments(reddit, post, 100, NULL, comment_adder, this);
+}
+
+void MainFrameCust::ExitBtnPressed(wxCommandEvent &event) {
+    wxTopLevelWindowBase::Destroy();
+}
+
+void MainFrameCust::GoSubBtnPressed(wxCommandEvent &event) {
+    PostBoxArea->Clear(true);
+    posts.clear();
+
+    wxTextEntryDialog entry(this, "Subreddit Name", "Enter name of subreddit to go to");
+
+    if(entry.ShowModal() == wxID_OK) {
+        Subreddit_t *sub = subreddit_new(entry.GetValue().c_str());
+        subreddit_get_posts(reddit, sub, "hot", 100, NULL, post_adder, this);
+    }
+}
+
+void MainFrameCust::NewSubBtnPressed(wxCommandEvent &event) {
+
+}
+
+void MainFrameCust::AboutBtnPressed(wxCommandEvent &event) {
+    wxAboutDialogInfo infobox;
+    infobox.SetName("WxReddit");
+    infobox.SetVersion("0.1");
+    infobox.SetDescription("This is a simple reddit client written in wxWidgets and c++ that aims to be able to be run on very old hardware.");
+
+    infobox.SetCopyright("(C) 2022");
+    infobox.AddDeveloper("Rhys Adams");
+
+    wxAboutBox(infobox);
 }
 
 PostBoxCust::PostBoxCust(wxWindow* parent, wxWindow* window, Post_t* post) : PostBox(parent){
