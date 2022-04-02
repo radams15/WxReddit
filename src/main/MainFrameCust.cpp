@@ -13,7 +13,8 @@ extern "C" size_t req_get_dl(const char* url, const char* path, int use_proxy, c
 wxBitmap* GetBmp(const char* url){
     char file_name[256];
     size_t secs = clock();
-    sprintf(file_name, "%d.jpg", secs);
+    const char* tmpDir = getTmpDir();
+    sprintf(file_name, "%s%d.jpg", tmpDir, secs);
 
     req_get_dl(url, file_name, 0, NULL, NULL);
 

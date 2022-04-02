@@ -16,4 +16,6 @@ wxString toString(const char* in);
 
 wxString toString(std::string in);
 
+const char* getTmpDir();
+
 #endif //MACTUBE_UTIL_H
