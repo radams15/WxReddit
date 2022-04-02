@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(WxReddit)
 
 cmake_policy(SET CMP0054 OLD)
+cmake_policy(SET CMP0015 OLD)
 
 set(CMAKE_CXX_STANDARD 11)
 
@@ -38,7 +39,7 @@ if(UNIX AND NOT APPLE)
     find_package(Qt5 COMPONENTS Widgets)
 
 if(${GTK3_FOUND})
-	set(SOURCE ${SOURCE} src/main/specific/Gtk.c src/main/specific/Qt.cpp)
+	set(SOURCE ${SOURCE} src/main/specific/Gtk.c)
 elseif(${Qt5_FOUND})
     set(SOURCE ${SOURCE} src/main/specific/Qt.cpp)
 endif()

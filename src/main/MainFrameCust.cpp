@@ -10,6 +10,24 @@
 
 extern "C" size_t req_get_dl(const char* url, const char* path, int use_proxy, const char* proxy, void* headers);
 
+wxBitmap* GetBmp(const char* url){
+    char file_name[256];
+    size_t secs = clock();
+    sprintf(file_name, "%d.jpg", secs);
+
+    req_get_dl(url, file_name, 0, NULL, NULL);
+
+    wxImage* img = new wxImage;
+    img->LoadFile(toString((char*) file_name), wxBITMAP_TYPE_ANY);
+
+    if(img->IsOk()) {
+        wxBitmap *bmp = new wxBitmap(*img, -1);
+        return bmp;
+    }
+
+    return NULL;
+}
+
 void post_adder(Post_t* post, void* ptr){
     MainFrameCust* frame = (MainFrameCust*) ptr;
     frame->NewPostPanel(post);
@@ -42,16 +60,7 @@ void MainFrameCust::AddPostMainComment(Comment *comment) {
         return;
     }
 
-    char file_name[256];
-    size_t secs = clock();
-    sprintf(file_name, "%d.jpg", secs);
-
-    req_get_dl(comment->thumbnail, file_name, 0, NULL, NULL);
-
-    wxImage* img = new wxImage;
-    img->LoadFile(toString((char*) file_name), wxBITMAP_TYPE_JPEG);
-
-    wxBitmap* bmp = new wxBitmap(*img, -1);
+    wxBitmap* bmp = GetBmp(comment->thumbnail);
 
     PostPic->SetBitmap(*bmp);
 
@@ -174,10 +183,10 @@ void MainFrameCust::GoSubBtnPressed(wxCommandEvent &event) {
     PostBoxArea->Clear(true);
     posts.clear();
 
-    wxTextEntryDialog entry(this, "Subreddit Name", "Enter name of subreddit to go to");
+    wxTextEntryDialog entry(this, toString("Subreddit Name"), toString("Enter name of subreddit to go to"));
 
     if(entry.ShowModal() == wxID_OK) {
-        Subreddit_t *sub = subreddit_new(entry.GetValue().c_str());
+        Subreddit_t *sub = subreddit_new((char*) entry.GetValue().wc_str());
         subreddit_get_posts(reddit, sub, "hot", 100, NULL, post_adder, this);
     }
 }
@@ -188,12 +197,12 @@ void MainFrameCust::NewSubBtnPressed(wxCommandEvent &event) {
 
 void MainFrameCust::AboutBtnPressed(wxCommandEvent &event) {
     wxAboutDialogInfo infobox;
-    infobox.SetName("WxReddit");
-    infobox.SetVersion("0.1");
-    infobox.SetDescription("This is a simple reddit client written in wxWidgets and c++ that aims to be able to be run on very old hardware.");
+    infobox.SetName(toString("WxReddit"));
+    infobox.SetVersion(toString("0.1"));
+    infobox.SetDescription(toString("This is a simple reddit client written in wxWidgets and c++ that aims to be able to be run on very old hardware."));
 
-    infobox.SetCopyright("(C) 2022");
-    infobox.AddDeveloper("Rhys Adams");
+    infobox.SetCopyright(toString("(C) 2022"));
+    infobox.AddDeveloper(toString("Rhys Adams"));
 
     wxAboutBox(infobox);
 }
@@ -205,6 +214,14 @@ PostBoxCust::PostBoxCust(wxWindow* parent, wxWindow* window, Post_t* post) : Pos
     TitleLabel->SetLabel(toString(post->title));
     AuthorLabel->SetLabel(toString(post->author));
     SubredditLabel->SetLabel(toString(post->subreddit));
+
+    if(post->thumbnail != NULL) {
+        wxBitmap *bmp = GetBmp(post->thumbnail);
+
+        if(bmp != NULL){
+            FeedThumb->SetBitmap(*bmp);
+        }
+    }
 }
 
 void PostBoxCust::GoButtonOnButtonClick(wxCommandEvent &event) {

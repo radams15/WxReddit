@@ -30,6 +30,31 @@ GtkWidget* find_toolbar(GtkWidget* parent){
     return NULL;
 }
 
+GtkWidget* find_menubar(GtkWidget* parent){
+    if (GTK_IS_MENU_BAR(parent)) {
+        return parent;
+    }
+
+    if (GTK_IS_BIN(parent)) {
+        GtkWidget *child = gtk_bin_get_child(GTK_BIN(parent));
+
+        return find_menubar(child);
+    }
+
+    if (GTK_IS_CONTAINER(parent)) {
+        GList *children = gtk_container_get_children(GTK_CONTAINER(parent));
+        do{
+            GtkWidget* widget = find_menubar(children->data);
+            if (widget != NULL) {
+                return widget;
+            }
+        }while ((children = g_list_next(children)) != NULL);
+    }
+
+    return NULL;
+}
+
+#ifdef USE_STACK
 GtkWidget* find_notebook(GtkWidget* parent){
     if (GTK_IS_NOTEBOOK(parent)) {
         return parent;
@@ -52,6 +77,7 @@ GtkWidget* find_notebook(GtkWidget* parent){
     }
     return NULL;
 }
+#endif
 
 void remove_from_parent(GtkWidget* widget){
     GtkWidget* parent = gtk_widget_get_parent(widget);
@@ -96,6 +122,7 @@ GtkWidget* toolbar_to_headerbar(GtkToolbar* toolbar){
     return GTK_WIDGET(header);
 }
 
+#ifdef USE_STACK
 GtkWidget* notebook_to_stack_switcher(GtkNotebook* notebook){
     GtkWidget* out = gtk_grid_new();
 
@@ -127,9 +154,63 @@ GtkWidget* notebook_to_stack_switcher(GtkNotebook* notebook){
     gtk_widget_show_all(GTK_WIDGET(out));
     return GTK_WIDGET(out);
 }
+#endif
+
+static gint
+my_popup_handler (GtkWidget *widget, GdkEvent *event)
+{
+    GtkMenu *menu;
+    GdkEventButton *event_button;
+
+    g_return_val_if_fail (widget != NULL, FALSE);
+    g_return_val_if_fail (GTK_IS_MENU (widget), FALSE);
+    g_return_val_if_fail (event != NULL, FALSE);
+
+    // The "widget" is the menu that was supplied when
+    // g_signal_connect_swapped() was called.
+    menu = GTK_MENU (widget);
+
+    if (event->type == GDK_BUTTON_PRESS)
+    {
+        event_button = (GdkEventButton *) event;
+        if (event_button->button == GDK_BUTTON_SECONDARY)
+        {
+            gtk_menu_popup (menu, NULL, NULL, NULL, NULL,
+                            event_button->button, event_button->time);
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+GtkWidget* menubar_to_hamburger(GtkWindow* win, GtkWidget* menubar){
+    if(!GTK_IS_MENU_BAR(menubar)){ return NULL; }
+
+    GtkWidget* hamburger = gtk_menu_new();
+    remove_from_parent(hamburger);
+
+    g_signal_connect_swapped(win, "button_press_event", G_CALLBACK(my_popup_handler), hamburger);
+
+    GList *children = gtk_container_get_children(GTK_CONTAINER(menubar));
+    do{
+        if(GTK_IS_MENU_ITEM(children)){
+            GtkMenuItem* item = (GtkMenuItem*) children;
+
+            gtk_menu_shell_append(GTK_MENU_SHELL(hamburger), GTK_WIDGET(item));
+        }
+    }while ((children = g_list_next(children)) != NULL);
+
+
+    gtk_widget_set_visible(hamburger, TRUE);
+    return hamburger;
+}
+
+#define USE_HAMBURGER
 
 void tweak(void* window){
     GtkWidget* win = (GtkWidget*) window;
+
 
 #ifdef USE_HEADERBAR
     GtkToolbar* toolbar = GTK_TOOLBAR(g_object_ref(find_toolbar(win)));
@@ -137,6 +218,20 @@ void tweak(void* window){
     GtkWidget * header = toolbar_to_headerbar(toolbar);
 
     gtk_window_set_titlebar(GTK_WINDOW(win), header);
+
+#ifdef USE_HAMBURGER
+    GtkWidget* menubar = g_object_ref(find_menubar(win));
+
+    GtkWidget* hamburger = menubar_to_hamburger(win, menubar);
+
+#ifdef USE_HANDY
+    hdy_header_bar_pack_end(HDY_HEADER_BAR(header), hamburger);
+#else
+    gtk_header_bar_pack_end(GTK_HEADER_BAR(header), hamburger);
+#endif
+
+#endif
+
 #endif
 
 #ifdef USE_STACK
