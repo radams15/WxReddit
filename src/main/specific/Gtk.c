@@ -1,10 +1,16 @@
 #include <gtk/gtk.h>
 
 #ifdef USE_HANDY
-
 #include <handy.h>
-
 #endif
+
+#ifdef USE_GRANITE
+#include <granite/granite.h>
+
+GraniteSettings* granite_settings;
+#endif
+
+GtkSettings* settings;
 
 GtkWidget* find_toolbar(GtkWidget* parent){
     if (GTK_IS_TOOLBAR(parent)) {
@@ -54,31 +60,6 @@ GtkWidget* find_menubar(GtkWidget* parent){
     return NULL;
 }
 
-#ifdef USE_STACK
-GtkWidget* find_notebook(GtkWidget* parent){
-    if (GTK_IS_NOTEBOOK(parent)) {
-        return parent;
-    }
-
-    if (GTK_IS_BIN(parent)) {
-        GtkWidget *child = gtk_bin_get_child(GTK_BIN(parent));
-
-        return find_notebook(child);
-    }
-
-    if (GTK_IS_CONTAINER(parent)) {
-        GList *children = gtk_container_get_children(GTK_CONTAINER(parent));
-        do{
-            GtkWidget* widget = find_notebook(children->data);
-            if (widget != NULL) {
-                return widget;
-            }
-        }while ((children = g_list_next(children)) != NULL);
-    }
-    return NULL;
-}
-#endif
-
 void remove_from_parent(GtkWidget* widget){
     GtkWidget* parent = gtk_widget_get_parent(widget);
 
@@ -121,40 +102,6 @@ GtkWidget* toolbar_to_headerbar(GtkToolbar* toolbar){
 
     return GTK_WIDGET(header);
 }
-
-#ifdef USE_STACK
-GtkWidget* notebook_to_stack_switcher(GtkNotebook* notebook){
-    GtkWidget* out = gtk_grid_new();
-
-    remove_from_parent(GTK_WIDGET(notebook));
-
-    GtkStack* stack = GTK_STACK(gtk_stack_new());
-
-    GList *children = gtk_container_get_children(GTK_CONTAINER(notebook));
-    do{
-        GtkWidget* child = g_object_ref(children->data);
-
-        remove_from_parent(child);
-
-        if(!GTK_IS_BOX(child)){
-            printf("A\n");
-            gtk_stack_add_titled(stack, child, "nb", "Notebook");
-            gtk_widget_set_visible(child, TRUE);
-        }
-
-    }while ((children = g_list_next(children)) != NULL);
-
-
-    GtkStackSwitcher* switcher = GTK_STACK_SWITCHER(gtk_stack_switcher_new());
-    gtk_stack_switcher_set_stack(switcher, stack);
-
-    gtk_grid_attach(GTK_GRID(out), switcher, 0, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(out), stack, 0, 1, 1, 1);
-
-    gtk_widget_show_all(GTK_WIDGET(out));
-    return GTK_WIDGET(out);
-}
-#endif
 
 static gint
 my_popup_handler (GtkWidget *widget, GdkEvent *event)
@@ -206,16 +153,36 @@ GtkWidget* menubar_to_hamburger(GtkWindow* win, GtkWidget* menubar){
     return hamburger;
 }
 
-#define USE_HAMBURGER
+void on_color_scheme_change(){
+    g_object_set(settings, "gtk-application-prefer-dark-theme", granite_settings_get_prefers_color_scheme(granite_settings) == GRANITE_SETTINGS_COLOR_SCHEME_DARK, NULL);
+}
 
 void tweak(void* window){
     GtkWidget* win = (GtkWidget*) window;
 
+    GtkApplication* app = gtk_window_get_application(win);
 
 #ifdef USE_HEADERBAR
     GtkToolbar* toolbar = GTK_TOOLBAR(g_object_ref(find_toolbar(win)));
 
     GtkWidget * header = toolbar_to_headerbar(toolbar);
+
+#ifdef USE_GRANITE
+    GtkStyleContext* style = gtk_widget_get_style_context(header);
+    gtk_style_context_add_class(style, "default-decoration");
+
+    GraniteModeSwitch* mode_switch = granite_mode_switch_new_from_icon_name("display-brightness-symbolic", "weather-clear-night-symbolic");
+    granite_mode_switch_set_primary_icon_tooltip_text(mode_switch, "Light Background");
+    granite_mode_switch_set_secondary_icon_tooltip_text(mode_switch, "Dark Background");
+    gtk_widget_set_valign(GTK_WIDGET(mode_switch), GTK_ALIGN_CENTER);
+    g_object_bind_property(mode_switch, "active", settings, "gtk-application-prefer-dark-theme", G_BINDING_BIDIRECTIONAL);
+
+    gtk_header_bar_pack_end(GTK_HEADER_BAR(header), GTK_WIDGET(mode_switch));
+
+    g_signal_connect(granite_settings, "notify::prefers-color-scheme", G_CALLBACK(on_color_scheme_change), NULL);
+#endif
+
+    gtk_widget_show_all(header);
 
     gtk_window_set_titlebar(GTK_WINDOW(win), header);
 
@@ -233,22 +200,19 @@ void tweak(void* window){
 #endif
 
 #endif
-
-#ifdef USE_STACK
-    GtkWidget* notebook = g_object_ref(find_notebook(win));
-    GtkBox* box = gtk_widget_get_parent(notebook);
-
-    GtkWidget* ss = notebook_to_stack_switcher(GTK_NOTEBOOK(notebook));
-
-    gtk_container_add(GTK_CONTAINER(box), GTK_WIDGET(ss));
-#endif
 }
 
 void gtk_tweak_setup(){
+    settings = gtk_settings_get_default();
+
 #ifdef USE_HANDY
     hdy_init();
 
     hdy_style_manager_set_color_scheme (hdy_style_manager_get_default (),
                                         HDY_COLOR_SCHEME_PREFER_LIGHT);
+#endif
+#ifdef USE_GRANITE
+    granite_settings = granite_settings_get_default();
+    on_color_scheme_change();
 #endif
 }

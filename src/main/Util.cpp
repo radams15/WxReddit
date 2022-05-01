@@ -27,6 +27,10 @@ wxString toString(std::string in){
     return toString(in.c_str());
 }
 
+const char* toChars(wxString in){
+    return in.mb_str();
+}
+
 const char* getTmpDir(){
 #ifdef __UNIX__
     mkdir("/tmp/wxreddit/", 0755);

@@ -11,7 +11,6 @@ private:
 
 protected:
     void MainFrameOnActivate( wxActivateEvent& event );
-    void SubBoxOnCombobox( wxCommandEvent& event );
     void MoreButtonOnButtonClick( wxCommandEvent& event );
 
     void ExitBtnPressed( wxCommandEvent& event );
@@ -21,6 +20,7 @@ protected:
 
     Reddit_t* reddit;
     List_t* subs;
+    wxString selectedSub;
 
 public:
     std::vector< Post_t* > posts;
@@ -48,4 +48,19 @@ protected:
     void GoButtonOnButtonClick( wxCommandEvent& event );
 public:
     PostBoxCust(wxWindow* parent, wxWindow* window, Post_t* post);
+};
+
+class GoSubDlgCust : public GoSubDlg {
+private:
+    wxString value;
+
+protected:
+    void CancelBtnPressed( wxCommandEvent& event );
+    void OkBtnPressed( wxCommandEvent& event );
+
+public:
+    GoSubDlgCust( wxWindow* parent, List_t* subs);
+
+    wxString GetValue();
+
 };
