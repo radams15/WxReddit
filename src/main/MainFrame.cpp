@@ -137,7 +137,9 @@ MainFrame::~MainFrame()
 }
 
 BEGIN_EVENT_TABLE( PostBox, wxPanel )
-	EVT_BUTTON( wxID_ANY, PostBox::_wxFB_GoButtonOnButtonClick )
+	EVT_BUTTON( ID_THUMB, PostBox::_wxFB_ThumbClicked )
+	EVT_HYPERLINK( wxID_ANY, PostBox::_wxFB_SubClicked )
+	EVT_BUTTON( ID_GO_BTN, PostBox::_wxFB_GoButtonOnButtonClick )
 END_EVENT_TABLE()
 
 PostBox::PostBox( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name ) : wxPanel( parent, id, pos, size, style, name )
@@ -145,8 +147,8 @@ PostBox::PostBox( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxS
 	wxBoxSizer* bSizer4;
 	bSizer4 = new wxBoxSizer( wxVERTICAL );
 
-	FeedThumb = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer4->Add( FeedThumb, 5, wxALIGN_LEFT|wxALL|wxSHAPED, 5 );
+	FeedThumb = new wxBitmapButton( this, ID_THUMB, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW|0 );
+	bSizer4->Add( FeedThumb, 5, wxALIGN_CENTER|wxALL|wxSHAPED, 5 );
 
 	TitleLabel = new wxStaticText( this, wxID_ANY, wxT("Title"), wxDefaultPosition, wxDefaultSize, 0 );
 	TitleLabel->Wrap( 200 );
@@ -156,11 +158,10 @@ PostBox::PostBox( wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxS
 	AuthorLabel->Wrap( -1 );
 	bSizer4->Add( AuthorLabel, 0, wxALL, 5 );
 
-	SubredditLabel = new wxStaticText( this, wxID_ANY, wxT("Subreddit"), wxDefaultPosition, wxDefaultSize, 0 );
-	SubredditLabel->Wrap( -1 );
+	SubredditLabel = new wxHyperlinkCtrl( this, wxID_ANY, wxT("Subreddit"), wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	bSizer4->Add( SubredditLabel, 0, wxALL, 5 );
 
-	GoButton = new wxButton( this, wxID_ANY, wxT("Go"), wxDefaultPosition, wxDefaultSize, 0 );
+	GoButton = new wxButton( this, ID_GO_BTN, wxT("Go"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( GoButton, 0, wxALL, 5 );
 
 	m_staticline1 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -226,5 +227,26 @@ GoSubDlg::GoSubDlg( wxWindow* parent, wxWindowID id, const wxString& title, cons
 }
 
 GoSubDlg::~GoSubDlg()
+{
+}
+
+HtmlDlg::HtmlDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+
+	wxBoxSizer* bSizer11;
+	bSizer11 = new wxBoxSizer( wxVERTICAL );
+
+	HtmlDisp = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_NO_SELECTION|wxHW_SCROLLBAR_AUTO );
+	bSizer11->Add( HtmlDisp, 1, wxALL|wxEXPAND, 5 );
+
+
+	this->SetSizer( bSizer11 );
+	this->Layout();
+
+	this->Centre( wxBOTH );
+}
+
+HtmlDlg::~HtmlDlg()
 {
 }

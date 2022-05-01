@@ -46,6 +46,8 @@ private:
     wxWindow* window;
 protected:
     void GoButtonOnButtonClick( wxCommandEvent& event );
+    void ThumbClicked( wxCommandEvent& event );
+    void SubClicked( wxHyperlinkEvent& event );
 public:
     PostBoxCust(wxWindow* parent, wxWindow* window, Post_t* post);
 };

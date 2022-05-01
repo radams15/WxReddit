@@ -28,18 +28,15 @@
 #include <wx/toolbar.h>
 #include <wx/menu.h>
 #include <wx/frame.h>
+#include <wx/bmpbuttn.h>
 #include <wx/button.h>
+#include <wx/hyperlink.h>
 #include <wx/statline.h>
 #include <wx/combobox.h>
 #include <wx/dialog.h>
+#include <wx/html/htmlwin.h>
 
 ///////////////////////////////////////////////////////////////////////////
-
-#define ID_MORE_BTN 1000
-#define ID_GOSUB 1001
-#define ID_NEWSUB 1002
-#define ID_CANCEL 1003
-#define ID_SUB_DLG_OK 1004
 
 ///////////////////////////////////////////////////////////////////////////////
 /// Class MainFrame
@@ -59,6 +56,13 @@ class MainFrame : public wxFrame
 
 
 	protected:
+		enum
+		{
+			ID_MORE_BTN = 1000,
+			ID_GOSUB,
+			ID_NEWSUB
+		};
+
 		wxBoxSizer* bSizer3;
 		wxNotebook* NoteBook;
 		wxPanel* FeedPanel;
@@ -104,22 +108,32 @@ class PostBox : public wxPanel
 	private:
 
 		// Private event handlers
+		void _wxFB_ThumbClicked( wxCommandEvent& event ){ ThumbClicked( event ); }
+		void _wxFB_SubClicked( wxHyperlinkEvent& event ){ SubClicked( event ); }
 		void _wxFB_GoButtonOnButtonClick( wxCommandEvent& event ){ GoButtonOnButtonClick( event ); }
 
 
 	protected:
+		enum
+		{
+			ID_THUMB = 1000,
+			ID_GO_BTN
+		};
+
+		wxBitmapButton* FeedThumb;
+		wxHyperlinkCtrl* SubredditLabel;
 		wxButton* GoButton;
 		wxStaticLine* m_staticline1;
 
 		// Virtual event handlers, override them in your derived class
+		virtual void ThumbClicked( wxCommandEvent& event ) { event.Skip(); }
+		virtual void SubClicked( wxHyperlinkEvent& event ) { event.Skip(); }
 		virtual void GoButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:
-		wxStaticBitmap* FeedThumb;
 		wxStaticText* TitleLabel;
 		wxStaticText* AuthorLabel;
-		wxStaticText* SubredditLabel;
 
 		PostBox( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 299,426 ), long style = wxTAB_TRAVERSAL, const wxString& name = wxEmptyString );
 
@@ -141,6 +155,12 @@ class GoSubDlg : public wxDialog
 
 
 	protected:
+		enum
+		{
+			ID_CANCEL = 1000,
+			ID_SUB_DLG_OK
+		};
+
 		wxStaticText* m_staticText6;
 		wxComboBox* SubBox;
 		wxButton* CancelBtn;
@@ -156,6 +176,24 @@ class GoSubDlg : public wxDialog
 		GoSubDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Go To Subreddit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 418,214 ), long style = wxDEFAULT_DIALOG_STYLE );
 
 		~GoSubDlg();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class HtmlDlg
+///////////////////////////////////////////////////////////////////////////////
+class HtmlDlg : public wxDialog
+{
+	private:
+
+	protected:
+
+	public:
+		wxHtmlWindow* HtmlDisp;
+
+		HtmlDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Image Viewer"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 390,242 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+
+		~HtmlDlg();
 
 };
 

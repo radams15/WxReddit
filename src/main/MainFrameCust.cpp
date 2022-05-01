@@ -10,9 +10,18 @@
 
 extern "C" size_t req_get_dl(const char* url, const char* path, int use_proxy, const char* proxy, void* headers);
 
-wxBitmap* GetBmp(const char* url){
+#ifdef USE_THREADING
+pthread_mutex_t post_mutex;
+pthread_mutex_t comment_mutex;
+
+#define reddit_get_posts_hot reddit_get_posts_hot_t
+#define subreddit_get_posts subreddit_get_posts_t
+#define post_get_comments post_get_comments_t
+#endif
+
+wxString getFile(const char* url){
     if(toString(url) == wxT("default")){
-        return NULL;
+        return "";
     }
 
     char file_name[256];
@@ -22,8 +31,18 @@ wxBitmap* GetBmp(const char* url){
 
     req_get_dl(url, file_name, 0, NULL, NULL);
 
+    return toString((char*) file_name);
+}
+
+wxBitmap* GetBmp(const char* url){
+    wxString fileName = getFile(url);
+
+    if(fileName == ""){
+        return NULL;
+    }
+
     wxImage* img = new wxImage;
-    img->LoadFile(toString((char*) file_name), wxBITMAP_TYPE_ANY);
+    img->LoadFile(fileName, wxBITMAP_TYPE_ANY);
 
     if(img->IsOk()) {
         wxBitmap *bmp = new wxBitmap(*img, -1);
@@ -35,17 +54,34 @@ wxBitmap* GetBmp(const char* url){
 
 void post_adder(Post_t* post, void* ptr){
     MainFrameCust* frame = (MainFrameCust*) ptr;
+
+#ifdef USE_THREADING
+    pthread_mutex_lock(&post_mutex);
+#endif
+
     frame->NewPostPanel(post);
+
+#ifdef USE_THREADING
+    pthread_mutex_unlock(&post_mutex);
+#endif
 }
 
 void comment_adder(Comment_t* comment, void* ptr, int is_title){
     MainFrameCust* frame = (MainFrameCust*) ptr;
+
+#ifdef USE_THREADING
+    pthread_mutex_lock(&comment_mutex);
+#endif
 
     if(is_title){
         frame->AddPostMainComment(comment);
     }else{
         frame->AddComment(comment, frame->comment_root);
     }
+
+#ifdef USE_THREADING
+    pthread_mutex_unlock(&comment_mutex);
+#endif
 }
 
 void MainFrameCust::AddComment(Comment_t *comment, wxTreeItemId parent) {
@@ -92,7 +128,7 @@ MainFrameCust::MainFrameCust(Reddit_t* reddit, wxWindow* parent, wxWindowID id, 
     tweak((void*) GetQMainWindow());
 #endif
 
-    //reddit_get_posts_hot(reddit, 100, NULL, post_adder, this);
+    reddit_get_posts_hot(reddit, 100, NULL, post_adder, this);
 
     LoadSubs();
 
@@ -219,6 +255,20 @@ PostBoxCust::PostBoxCust(wxWindow* parent, wxWindow* window, Post_t* post) : Pos
 
 void PostBoxCust::GoButtonOnButtonClick(wxCommandEvent &event) {
     ((MainFrameCust*) window)->LoadPost(post);
+}
+
+void PostBoxCust::ThumbClicked(wxCommandEvent &event) {
+    wxString toOpen = getFile(post->thumbnail);
+
+    HtmlDlg viewer(this);
+
+    viewer.HtmlDisp->SetPage(wxString::Format("<img src='%s'>", toOpen));
+
+    viewer.ShowModal();
+}
+
+void PostBoxCust::SubClicked(wxHyperlinkEvent &event) {
+
 }
 
 GoSubDlgCust::GoSubDlgCust(wxWindow *parent, List_t* subs) : GoSubDlg(parent) {

@@ -14,7 +14,7 @@ set(CMAKE_CXX_STANDARD 11)
 option(HEADERBAR "Uses unified titlebar and toolbar (OSX/Gtk3 Only)" ON)
 option(GNOME "Uses libhandy (Gtk3) / libgranite (Gtk3) gui" ON)
 
-find_package(wxWidgets REQUIRED COMPONENTS core base adv)
+find_package(wxWidgets REQUIRED COMPONENTS core base adv html)
 find_package(PkgConfig REQUIRED)
 
 include(${wxWidgets_USE_FILE})
