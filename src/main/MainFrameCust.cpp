@@ -21,7 +21,7 @@ pthread_mutex_t comment_mutex;
 
 wxString getFile(const char* url){
     if(toString(url) == wxT("default")){
-        return "";
+        return wxT("");
     }
 
     char file_name[256];
@@ -37,7 +37,7 @@ wxString getFile(const char* url){
 wxBitmap* GetBmp(const char* url){
     wxString fileName = getFile(url);
 
-    if(fileName == ""){
+    if(fileName == wxT("")){
         return NULL;
     }
 
@@ -97,13 +97,12 @@ void MainFrameCust::AddComment(Comment_t *comment, wxTreeItemId parent) {
 void MainFrameCust::AddPostMainComment(Comment *comment) {
     comment_root = CommentControl->AddRoot(toString(comment->title));
 
-    if(! comment->thumbnail){
+    /*if(! comment->thumbnail){
         return;
     }
 
     wxBitmap* bmp = GetBmp(comment->thumbnail);
-
-    PostPic->SetBitmap(*bmp);
+    PostPic->SetBitmap(*bmp);*/
 
     CommentControl->Expand(comment_root);
 }
@@ -114,7 +113,7 @@ MainFrameCust::MainFrameCust(Reddit_t* reddit, wxWindow* parent, wxWindowID id, 
     this->reddit = reddit;
 	
 	comment_root = NULL;
-    selectedSub = "All";
+    selectedSub = wxT("All");
 
 #ifdef MAC_OS_X_VERSION_10_10
     NSWindow* win = MacGetTopLevelWindowRef();
@@ -149,7 +148,7 @@ void MainFrameCust::MoreButtonOnButtonClick(wxCommandEvent &event) {
 
     const char* fullname = post_fullname(prev);
 
-    if(selectedSub == "All"){
+    if(selectedSub == wxT("All")){
         reddit_get_posts_hot(reddit, 100, fullname, post_adder, this);
 
     }else {
@@ -208,7 +207,7 @@ void MainFrameCust::GoSubBtnPressed(wxCommandEvent &event) {
 
         wxString subName = entry.GetValue();
 
-        if(subName == "All"){
+        if(subName == wxT("All")){
             reddit_get_posts_hot(reddit, 100, NULL, post_adder, this);
         }else {
             Subreddit_t* sub = subreddit_new(toChars(subName));
@@ -244,11 +243,11 @@ PostBoxCust::PostBoxCust(wxWindow* parent, wxWindow* window, Post_t* post) : Pos
     AuthorLabel->SetLabel(toString(post->author));
     SubredditLabel->SetLabel(toString(post->subreddit));
 
-    if(post->thumbnail != NULL) {
-        wxBitmap *bmp = GetBmp(post->thumbnail);
+    if(post_is_img(post)) {
+        wxBitmap *bmp = GetBmp(post->url);
 
         if(bmp != NULL){
-            FeedThumb->SetBitmap(*bmp);
+            FeedThumb->SetBitmapLabel(*bmp);
         }
     }
 }
@@ -258,13 +257,15 @@ void PostBoxCust::GoButtonOnButtonClick(wxCommandEvent &event) {
 }
 
 void PostBoxCust::ThumbClicked(wxCommandEvent &event) {
-    wxString toOpen = getFile(post->thumbnail);
+    if(post_is_img(post)) {
+        wxString toOpen = getFile(post->url);
 
-    HtmlDlg viewer(this);
+        HtmlDlg viewer(this);
 
-    viewer.HtmlDisp->SetPage(wxString::Format("<img src='%s'>", toOpen));
+        viewer.HtmlDisp->SetPage(wxString::Format(wxT("<center><img src='%s'></center>"), toOpen));
 
-    viewer.ShowModal();
+        viewer.ShowModal();
+    }
 }
 
 void PostBoxCust::SubClicked(wxHyperlinkEvent &event) {

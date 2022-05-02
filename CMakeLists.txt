@@ -12,7 +12,7 @@ cmake_policy(SET CMP0015 OLD)
 set(CMAKE_CXX_STANDARD 11)
 
 option(HEADERBAR "Uses unified titlebar and toolbar (OSX/Gtk3 Only)" ON)
-option(GNOME "Uses libhandy (Gtk3) / libgranite (Gtk3) gui" ON)
+option(GTK_STYLE "Uses libhandy (Gtk3) / libgranite (Gtk3) styling" ON)
 
 find_package(wxWidgets REQUIRED COMPONENTS core base adv html)
 find_package(PkgConfig REQUIRED)
@@ -65,20 +65,20 @@ if(HEADERBAR)
     target_compile_definitions(WxReddit PUBLIC USE_HEADERBAR)
 endif()
 
-if("GNOME" AND "${HANDY_FOUND}")
+if("GNOME" AND "${GRANITE_FOUND}")
+    message("Using elementary theming (granite)")
+    target_compile_definitions(WxReddit PUBLIC USE_GRANITE)
+
+    set(LIBS ${LIBS} ${GRANITE_LIBRARIES})
+    set(LINK_DIRS ${LINK_DIRS} ${GRANITE_LIBRARIES})
+    set(INCLUDE_DIRS ${INCLUDE_DIRS} ${GRANITE_INCLUDE_DIRS})
+elseif("GNOME" AND "${HANDY_FOUND}")
     message("Using gnome theming (libhandy)")
     target_compile_definitions(WxReddit PUBLIC USE_HANDY)
 
     set(LIBS ${LIBS} ${HANDY_LIBRARIES})
     set(LINK_DIRS ${LINK_DIRS} ${HANDY_LIBRARIES})
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${HANDY_INCLUDE_DIRS})
-elseif("GNOME" AND "${GRANITE_FOUND}")
-    message("Using gnome theming (granite)")
-    target_compile_definitions(WxReddit PUBLIC USE_GRANITE)
-
-    set(LIBS ${LIBS} ${GRANITE_LIBRARIES})
-    set(LINK_DIRS ${LINK_DIRS} ${GRANITE_LIBRARIES})
-    set(INCLUDE_DIRS ${INCLUDE_DIRS} ${GRANITE_INCLUDE_DIRS})
 endif()
 
 #set_target_properties(WxReddit PROPERTIES
@@ -94,8 +94,9 @@ endif()
 #set_source_files_properties("${CMAKE_SOURCE_DIR}/res/MacTube.icns" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 #file(COPY "${CMAKE_SOURCE_DIR}/res/MacTube.icns" DESTINATION "MacTube.app/Contents/Resources")
 
+target_compile_definitions(WxReddit PUBLIC NO_EXPORT)
+
 include_directories(${INCLUDE_DIRS})
 link_directories(${LINK_DIRS})
-
 
 target_link_libraries(WxReddit reddit request ${LIBS})

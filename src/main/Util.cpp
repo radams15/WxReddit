@@ -9,7 +9,7 @@
 #ifdef __UNIX__
 #include <unistd.h>
 #elif WIN32
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 wxString toString(const char* in){

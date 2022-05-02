@@ -154,32 +154,41 @@ GtkWidget* menubar_to_hamburger(GtkWindow* win, GtkWidget* menubar){
 }
 
 void on_color_scheme_change(){
+#ifdef USE_GRANITE
     g_object_set(settings, "gtk-application-prefer-dark-theme", granite_settings_get_prefers_color_scheme(granite_settings) == GRANITE_SETTINGS_COLOR_SCHEME_DARK, NULL);
+#endif
 }
 
 void tweak(void* window){
     GtkWidget* win = (GtkWidget*) window;
 
     GtkApplication* app = gtk_window_get_application(win);
-
-#ifdef USE_HEADERBAR
+    
     GtkToolbar* toolbar = GTK_TOOLBAR(g_object_ref(find_toolbar(win)));
-
-    GtkWidget * header = toolbar_to_headerbar(toolbar);
-
+    
 #ifdef USE_GRANITE
-    GtkStyleContext* style = gtk_widget_get_style_context(header);
-    gtk_style_context_add_class(style, "default-decoration");
-
     GraniteModeSwitch* mode_switch = granite_mode_switch_new_from_icon_name("display-brightness-symbolic", "weather-clear-night-symbolic");
     granite_mode_switch_set_primary_icon_tooltip_text(mode_switch, "Light Background");
     granite_mode_switch_set_secondary_icon_tooltip_text(mode_switch, "Dark Background");
     gtk_widget_set_valign(GTK_WIDGET(mode_switch), GTK_ALIGN_CENTER);
     g_object_bind_property(mode_switch, "active", settings, "gtk-application-prefer-dark-theme", G_BINDING_BIDIRECTIONAL);
 
-    gtk_header_bar_pack_end(GTK_HEADER_BAR(header), GTK_WIDGET(mode_switch));
+    GtkToolItem* tool = gtk_tool_item_new();
+    gtk_container_add(GTK_CONTAINER(tool), GTK_WIDGET(mode_switch));
+    gtk_toolbar_insert(toolbar, tool, -1);
+    gtk_widget_show_all(toolbar);
 
     g_signal_connect(granite_settings, "notify::prefers-color-scheme", G_CALLBACK(on_color_scheme_change), NULL);
+    on_color_scheme_change();
+#endif
+
+#ifdef USE_HEADERBAR
+    //gtk_window_set_decorated(GTK_WINDOW(win), 0);
+    GtkWidget * header = toolbar_to_headerbar(toolbar);
+    
+#ifdef USE_GRANITE
+    GtkStyleContext* style = gtk_widget_get_style_context(header);
+    gtk_style_context_add_class(style, "default-decoration");
 #endif
 
     gtk_widget_show_all(header);
@@ -207,12 +216,10 @@ void gtk_tweak_setup(){
 
 #ifdef USE_HANDY
     hdy_init();
-
-    hdy_style_manager_set_color_scheme (hdy_style_manager_get_default (),
-                                        HDY_COLOR_SCHEME_PREFER_LIGHT);
 #endif
 #ifdef USE_GRANITE
     granite_settings = granite_settings_get_default();
+    
     on_color_scheme_change();
 #endif
 }
