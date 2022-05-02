@@ -65,14 +65,14 @@ if(HEADERBAR)
     target_compile_definitions(WxReddit PUBLIC USE_HEADERBAR)
 endif()
 
-if("GNOME" AND "${GRANITE_FOUND}")
+if("GTK_STYLE" AND "${GRANITE_FOUND}")
     message("Using elementary theming (granite)")
     target_compile_definitions(WxReddit PUBLIC USE_GRANITE)
 
     set(LIBS ${LIBS} ${GRANITE_LIBRARIES})
     set(LINK_DIRS ${LINK_DIRS} ${GRANITE_LIBRARIES})
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${GRANITE_INCLUDE_DIRS})
-elseif("GNOME" AND "${HANDY_FOUND}")
+elseif("GTK_STYLE" AND "${HANDY_FOUND}")
     message("Using gnome theming (libhandy)")
     target_compile_definitions(WxReddit PUBLIC USE_HANDY)
 
