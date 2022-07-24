@@ -22,7 +22,7 @@ include(${wxWidgets_USE_FILE})
 set(BUILD_TEST OFF)
 add_subdirectory(lib/libreddit)
 
-set(SOURCE src/main/main.cpp src/main/MainApp.cpp src/main/MainFrame.cpp src/main/Table.cpp src/main/Util.cpp src/main/MainFrameCust.cpp)
+set(SOURCE src/main/main.cpp src/main/MainApp.cpp src/main/MainFrame.cpp src/main/Table.cpp src/main/Util.cpp src/main/MainFrameCust.cpp src/main/PostFrameCust.cpp)
 set(LIBS ${wxWidgets_LIBRARIES} -L${CMAKE_SOURCE_DIR}/lib)
 set(INCLUDE DIRS "")
 set(LINK_DIRS "")
@@ -40,24 +40,22 @@ if(UNIX AND NOT APPLE)
 
     find_package(Qt5 COMPONENTS Widgets)
 
-if(${GTK3_FOUND})
-	set(SOURCE ${SOURCE} src/main/specific/Gtk.c)
-elseif(${Qt5_FOUND})
-    set(SOURCE ${SOURCE} src/main/specific/Qt.cpp)
-endif()
-
+    if(${Qt5_FOUND})
+        set(SOURCE ${SOURCE} src/main/specific/Qt.cpp)
+    elseif(${GTK3_FOUND})
+        set(SOURCE ${SOURCE} src/main/specific/Gtk.c)
+    endif()
 endif()
 
 add_executable(WxReddit MACOSX_BUNDLE ${SOURCE})
 
 target_include_directories(WxReddit PRIVATE lib/libreddit/include)
-
-if(${GTK3_FOUND})
+if(${Qt5_FOUND})
+    set(LIBS ${LIBS} Qt5::Widgets)
+elseif(${GTK3_FOUND})
     set(INCLUDE_DIRS ${INCLUDE_DIRS} ${GTK3_INCLUDE_DIRS})
     set(LINK_DIRS ${LINK_DIRS} ${GTK3_LIBRARIES})
     set(LIBS ${LIBS} ${GTK3_LIBRARIES})
-elseif(${Qt5_FOUND})
-    set(LIBS ${LIBS} Qt5::Widgets)
 endif()
 
 if(HEADERBAR)
@@ -96,7 +94,7 @@ endif()
 
 target_compile_definitions(WxReddit PUBLIC NO_EXPORT)
 
-include_directories(${INCLUDE_DIRS})
+include_directories(${INCLUDE_DIRS} lib/libreddit/lib/cJSON)
 link_directories(${LINK_DIRS})
 
 target_link_libraries(WxReddit reddit request ${LIBS})

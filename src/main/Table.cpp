@@ -8,6 +8,8 @@
 
 #include "Util.h"
 
+#include <Subreddit.h>
+
 using namespace std;
 
 int Table::GetNumberRows() {
@@ -32,19 +34,19 @@ bool Table::IsEmptyCell(int row, int col) {
 
 wxString Table::GetValue(int row, int col) {
     if(Exists(row, col)){
-	Post_t* post = data.at(row);
+	Post* post = data.at(row);
 
 	switch(col){
 		case 0:
-			return toString(post->title);
+			return wxString::FromUTF8(post->title);
 		case 1:
-			return toString(post->author);
+			return wxString::FromUTF8(post->author);
 		case 2:
-			return toString(post->subreddit);
+			return wxString::FromUTF8(post->subreddit->name);
 	}
     }
 
-    return toString("NONE");
+    return wxString::FromUTF8("NONE");
 }
 
 wxString Table::GetColLabelValue(int col) {
@@ -65,7 +67,7 @@ bool Table::Exists(int row, int col) {
     return true;
 }
 
-void Table::append(Post_t* to_add) {
+void Table::append(Post* to_add) {
 	data.push_back(to_add);
 }
 
@@ -77,7 +79,7 @@ void Table::Clear() {
     data.clear();
 }
 
-Post_t* Table::Tail() {
+Post* Table::Tail() {
     return data.at(data.size()-1);
 }
 

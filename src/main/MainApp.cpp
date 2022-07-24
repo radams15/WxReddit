@@ -7,8 +7,11 @@
 
 extern "C" void gtk_tweak_setup();
 
-MainApp::MainApp(Reddit_t* reddit) : wxApp(){
-	this->reddit = reddit;
+MainApp::MainApp() : wxApp(), client(){
+    if(client.getReddit()->authenticated == Reddit::UNAUTHENTICATED){
+        std::cerr << "Unable to login to Reddit!" << std::endl;
+        exit(1);
+    }
 }
 
 bool MainApp::OnInit() {
@@ -18,7 +21,7 @@ bool MainApp::OnInit() {
 
     wxInitAllImageHandlers();
 
-    MainFrameCust *frame = new MainFrameCust(reddit, NULL);
+    MainFrameCust *frame = new MainFrameCust(client.getReddit(), NULL);
     frame->Show(true);
 
     return true;

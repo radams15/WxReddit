@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b3)
+// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -26,12 +26,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 
-	NoteBook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	FeedPanel = new wxPanel( NoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer6;
-	bSizer6 = new wxBoxSizer( wxVERTICAL );
-
-	m_scrolledWindow1 = new wxScrolledWindow( FeedPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxVSCROLL );
+	m_scrolledWindow1 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE|wxVSCROLL );
 	m_scrolledWindow1->SetScrollRate( 5, 5 );
 	PostBoxArea = new wxBoxSizer( wxVERTICAL );
 
@@ -39,57 +34,7 @@ MainFrame::MainFrame( wxWindow* parent, wxWindowID id, const wxString& title, co
 	m_scrolledWindow1->SetSizer( PostBoxArea );
 	m_scrolledWindow1->Layout();
 	PostBoxArea->Fit( m_scrolledWindow1 );
-	bSizer6->Add( m_scrolledWindow1, 1, wxEXPAND | wxALL, 5 );
-
-
-	FeedPanel->SetSizer( bSizer6 );
-	FeedPanel->Layout();
-	bSizer6->Fit( FeedPanel );
-	NoteBook->AddPage( FeedPanel, wxT("Feed"), true );
-	PostPanel = new wxPanel( NoteBook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer* bSizer8;
-	bSizer8 = new wxBoxSizer( wxVERTICAL );
-
-	m_scrolledWindow2 = new wxScrolledWindow( PostPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
-	m_scrolledWindow2->SetScrollRate( 5, 5 );
-	wxBoxSizer* bSizer7;
-	bSizer7 = new wxBoxSizer( wxVERTICAL );
-
-	wxBoxSizer* bSizer9;
-	bSizer9 = new wxBoxSizer( wxVERTICAL );
-
-	PostTitle = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Post Title"), wxDefaultPosition, wxDefaultSize, 0 );
-	PostTitle->Wrap( 200 );
-	PostTitle->SetFont( wxFont( 24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
-
-	bSizer9->Add( PostTitle, 0, wxALL|wxEXPAND, 5 );
-
-	PostPic = new wxStaticBitmap( m_scrolledWindow2, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer9->Add( PostPic, 5, wxALIGN_CENTER_HORIZONTAL|wxALL|wxRESERVE_SPACE_EVEN_IF_HIDDEN|wxSHAPED, 5 );
-
-	PostContent = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Content"), wxDefaultPosition, wxDefaultSize, 0 );
-	PostContent->Wrap( 200 );
-	bSizer9->Add( PostContent, 2, wxALL|wxEXPAND, 5 );
-
-
-	bSizer7->Add( bSizer9, 2, wxEXPAND, 5 );
-
-	CommentControl = new wxTreeCtrl( m_scrolledWindow2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE );
-	bSizer7->Add( CommentControl, 1, wxALL|wxEXPAND, 5 );
-
-
-	m_scrolledWindow2->SetSizer( bSizer7 );
-	m_scrolledWindow2->Layout();
-	bSizer7->Fit( m_scrolledWindow2 );
-	bSizer8->Add( m_scrolledWindow2, 1, wxEXPAND | wxALL, 5 );
-
-
-	PostPanel->SetSizer( bSizer8 );
-	PostPanel->Layout();
-	bSizer8->Fit( PostPanel );
-	NoteBook->AddPage( PostPanel, wxT("Post"), false );
-
-	bSizer3->Add( NoteBook, 1, wxEXPAND | wxALL, 5 );
+	bSizer3->Add( m_scrolledWindow1, 1, wxEXPAND | wxALL, 5 );
 
 
 	this->SetSizer( bSizer3 );
@@ -248,5 +193,56 @@ HtmlDlg::HtmlDlg( wxWindow* parent, wxWindowID id, const wxString& title, const 
 }
 
 HtmlDlg::~HtmlDlg()
+{
+}
+
+PostFrame::PostFrame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxFrame( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+
+	wxBoxSizer* bSizer8;
+	bSizer8 = new wxBoxSizer( wxVERTICAL );
+
+	m_scrolledWindow2 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
+	m_scrolledWindow2->SetScrollRate( 5, 5 );
+	wxBoxSizer* bSizer7;
+	bSizer7 = new wxBoxSizer( wxVERTICAL );
+
+	wxBoxSizer* bSizer9;
+	bSizer9 = new wxBoxSizer( wxVERTICAL );
+
+	PostTitle = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Post Title"), wxDefaultPosition, wxDefaultSize, 0 );
+	PostTitle->Wrap( 200 );
+	PostTitle->SetFont( wxFont( 24, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
+
+	bSizer9->Add( PostTitle, 0, wxALL|wxEXPAND, 5 );
+
+	PostPic = new wxStaticBitmap( m_scrolledWindow2, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizer9->Add( PostPic, 5, wxALIGN_CENTER_HORIZONTAL|wxALL|wxRESERVE_SPACE_EVEN_IF_HIDDEN|wxSHAPED, 5 );
+
+	PostContent = new wxStaticText( m_scrolledWindow2, wxID_ANY, wxT("Content"), wxDefaultPosition, wxDefaultSize, 0 );
+	PostContent->Wrap( 200 );
+	bSizer9->Add( PostContent, 2, wxALL|wxEXPAND, 5 );
+
+
+	bSizer7->Add( bSizer9, 2, wxEXPAND, 5 );
+
+	CommentControl = new wxTreeCtrl( m_scrolledWindow2, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE );
+	bSizer7->Add( CommentControl, 1, wxALL|wxEXPAND, 5 );
+
+
+	m_scrolledWindow2->SetSizer( bSizer7 );
+	m_scrolledWindow2->Layout();
+	bSizer7->Fit( m_scrolledWindow2 );
+	bSizer8->Add( m_scrolledWindow2, 1, wxEXPAND | wxALL, 5 );
+
+
+	this->SetSizer( bSizer8 );
+	this->Layout();
+
+	this->Centre( wxBOTH );
+}
+
+PostFrame::~PostFrame()
 {
 }

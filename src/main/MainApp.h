@@ -12,15 +12,16 @@
 
 #include "Reddit.h"
 
+#include "Client.h"
+
 class MainApp : public wxApp {
 private:
-
-	Reddit_t* reddit;
+	Client client;
 
 public:
     virtual bool OnInit();
 
-	MainApp(Reddit_t* reddit);
+	MainApp();
 };
 
 

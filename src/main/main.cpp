@@ -3,21 +3,10 @@
 #include <wx/wx.h>
 #endif
 
-#include "Reddit.h"
-
 #include "MainApp.h"
 
-#include "../../SECRETS.h"
-
 int main(int argc, char** argv) {
-	Reddit_t* reddit = reddit_new(USERNAME, PASSWD, CID, SECRET);
-
-    if(!reddit->authenticated){
-        fprintf(stderr, "Failed to login!\n");
-        exit(1);
-    }
-	
-	wxApp::SetInstance( new MainApp(reddit) );
+	wxApp::SetInstance( new MainApp() );
 	wxEntryStart(argc, argv);
 	wxTheApp->CallOnInit();
 	wxTheApp->OnRun();

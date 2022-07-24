@@ -5,6 +5,7 @@
 #include "Table.h"
 
 #include "Util.h"
+#include "PostFrameCust.h"
 
 #include <cstdio>
 
@@ -19,40 +20,7 @@ pthread_mutex_t comment_mutex;
 #define post_get_comments post_get_comments_t
 #endif
 
-wxString getFile(const char* url){
-    if(toString(url) == wxT("default")){
-        return wxT("");
-    }
-
-    char file_name[256];
-    size_t secs = clock();
-    const char* tmpDir = getTmpDir();
-    sprintf(file_name, "%s%d.jpg", tmpDir, secs);
-
-    req_get_dl(url, file_name, 0, NULL, NULL);
-
-    return toString((char*) file_name);
-}
-
-wxBitmap* GetBmp(const char* url){
-    wxString fileName = getFile(url);
-
-    if(fileName == wxT("")){
-        return NULL;
-    }
-
-    wxImage* img = new wxImage;
-    img->LoadFile(fileName, wxBITMAP_TYPE_ANY);
-
-    if(img->IsOk()) {
-        wxBitmap *bmp = new wxBitmap(*img, -1);
-        return bmp;
-    }
-
-    return NULL;
-}
-
-void post_adder(Post_t* post, void* ptr){
+void post_adder(Post* post, void* ptr){
     MainFrameCust* frame = (MainFrameCust*) ptr;
 
 #ifdef USE_THREADING
@@ -66,57 +34,15 @@ void post_adder(Post_t* post, void* ptr){
 #endif
 }
 
-void comment_adder(Comment_t* comment, void* ptr, int is_title){
-    MainFrameCust* frame = (MainFrameCust*) ptr;
-
-#ifdef USE_THREADING
-    pthread_mutex_lock(&comment_mutex);
-#endif
-
-    if(is_title){
-        frame->AddPostMainComment(comment);
-    }else{
-        frame->AddComment(comment, frame->comment_root);
-    }
-
-#ifdef USE_THREADING
-    pthread_mutex_unlock(&comment_mutex);
-#endif
-}
-
-void MainFrameCust::AddComment(Comment_t *comment, wxTreeItemId parent) {
-    if(parent){
-        wxTreeItemId id = CommentControl->AppendItem(parent, toString(comment->body));
-
-        for(int i=0 ; i<comment->no_children ; i++){
-            AddComment((Comment_t*) comment->children[i], id);
-        }
-    }
-}
-
-void MainFrameCust::AddPostMainComment(Comment *comment) {
-    comment_root = CommentControl->AddRoot(toString(comment->title));
-
-    /*if(! comment->thumbnail){
-        return;
-    }
-
-    wxBitmap* bmp = GetBmp(comment->thumbnail);
-    PostPic->SetBitmap(*bmp);*/
-
-    CommentControl->Expand(comment_root);
-}
-
 extern "C" void tweak(void* window);
 
-MainFrameCust::MainFrameCust(Reddit_t* reddit, wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : MainFrame(parent, id, title, pos, size, style) {
+MainFrameCust::MainFrameCust(Reddit* reddit, wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : MainFrame(parent, id, title, pos, size, style) {
     this->reddit = reddit;
 	
-	comment_root = NULL;
     selectedSub = wxT("All");
 
 #ifdef MAC_OS_X_VERSION_10_10
-    NSWindow* win = MacGetTopLevelWindowRef();
+    NSWindow* win = (NSWindow*) MacGetTopLevelWindowRef();
     tweak((void*)win);
 #endif
 #ifdef __WXGTK3__
@@ -127,7 +53,7 @@ MainFrameCust::MainFrameCust(Reddit_t* reddit, wxWindow* parent, wxWindowID id, 
     tweak((void*) GetQMainWindow());
 #endif
 
-    reddit_get_posts_hot(reddit, 100, NULL, post_adder, this);
+    reddit->get_posts_hot(100, "", post_adder, this);
 
     LoadSubs();
 
@@ -140,27 +66,26 @@ void MainFrameCust::MainFrameOnActivate( wxActivateEvent& event ) {
 
 
 void MainFrameCust::LoadSubs() {
-    subs = reddit_get_subbed_list(reddit);
+    subs = reddit->get_subbed_list();
 }
 
 void MainFrameCust::MoreButtonOnButtonClick(wxCommandEvent &event) {
-    Post_t* prev = posts.at(posts.size()-1);
+    Post* prev = posts.at(posts.size()-1);
 
-    const char* fullname = post_fullname(prev);
+    wxString fullname = wxString::FromUTF8(prev->fullname());
 
     if(selectedSub == wxT("All")){
-        reddit_get_posts_hot(reddit, 100, fullname, post_adder, this);
+        reddit->get_posts_hot(100, fullname.ToStdString(), post_adder, this);
 
     }else {
-        Subreddit_t* sub = subreddit_new(toChars(selectedSub));
+        Subreddit* sub = new Subreddit(reddit, selectedSub.ToStdString());
 
-        subreddit_get_posts(reddit, sub, "hot", 100, fullname, post_adder, this);
+        sub->get_posts("hot", 100, fullname.ToStdString(), post_adder, this);
     }
 
     Refresh();
 }
-
-void MainFrameCust::NewPostPanel(Post_t *post) {
+void MainFrameCust::NewPostPanel(Post* post) {
     posts.push_back(post);
 
     PostBox* out = new PostBoxCust(m_scrolledWindow1, this, post);
@@ -178,18 +103,12 @@ void MainFrameCust::Refresh() {
     m_scrolledWindow1->FitInside();
 }
 
-void MainFrameCust::LoadPost(Post_t* post) {
-    if(comment_root) {
-        CommentControl->Delete(comment_root);
-        comment_root = NULL;
-    }
+void MainFrameCust::LoadPost(Post* post) {
+    PostFrameCust* frame = new PostFrameCust(this);
 
-    PostTitle->SetLabel(toString(post->title));
-    PostContent->SetLabel(toString(post->text));
+    frame->LoadPost(post);
 
-    NoteBook->ChangeSelection(1);
-
-    post_get_comments(reddit, post, 100, NULL, comment_adder, this);
+    frame->Show();
 }
 
 void MainFrameCust::ExitBtnPressed(wxCommandEvent &event) {
@@ -208,11 +127,11 @@ void MainFrameCust::GoSubBtnPressed(wxCommandEvent &event) {
         wxString subName = entry.GetValue();
 
         if(subName == wxT("All")){
-            reddit_get_posts_hot(reddit, 100, NULL, post_adder, this);
+            reddit->get_posts_hot(100, "", post_adder, this);
         }else {
-            Subreddit_t* sub = subreddit_new(toChars(subName));
+            Subreddit* sub = new Subreddit(reddit, subName.ToStdString());
 
-            subreddit_get_posts(reddit, sub, "hot", 100, NULL, post_adder, this);
+            sub->get_posts("hot", 100, "", post_adder, this);
         }
 
         Refresh();
@@ -235,16 +154,17 @@ void MainFrameCust::AboutBtnPressed(wxCommandEvent &event) {
     wxAboutBox(infobox);
 }
 
-PostBoxCust::PostBoxCust(wxWindow* parent, wxWindow* window, Post_t* post) : PostBox(parent){
+PostBoxCust::PostBoxCust(wxWindow* parent, wxWindow* window, Post* post) : PostBox(parent){
     this->post = post;
     this->window = window;
 
-    TitleLabel->SetLabel(toString(post->title));
-    AuthorLabel->SetLabel(toString(post->author));
-    SubredditLabel->SetLabel(toString(post->subreddit));
+    TitleLabel->SetLabel(wxString::FromUTF8(post->title));
+    AuthorLabel->SetLabel(wxString::FromUTF8(post->author));
+    SubredditLabel->SetLabel(wxString::FromUTF8(post->subreddit->name));
 
-    if(post_is_img(post)) {
-        wxBitmap *bmp = GetBmp(post->url);
+    std::string thumb = post->get_thumb_path();
+    if(thumb.length() > 0) {
+        wxBitmap *bmp = GetBmp(wxString::FromUTF8(thumb));
 
         if(bmp != NULL){
             FeedThumb->SetBitmapLabel(*bmp);
@@ -257,8 +177,8 @@ void PostBoxCust::GoButtonOnButtonClick(wxCommandEvent &event) {
 }
 
 void PostBoxCust::ThumbClicked(wxCommandEvent &event) {
-    if(post_is_img(post)) {
-        wxString toOpen = getFile(post->url);
+    if(post->is_img()) {
+        wxString toOpen = wxString::FromUTF8(post->get_image_path());
 
         HtmlDlg viewer(this);
 
@@ -272,11 +192,11 @@ void PostBoxCust::SubClicked(wxHyperlinkEvent &event) {
 
 }
 
-GoSubDlgCust::GoSubDlgCust(wxWindow *parent, List_t* subs) : GoSubDlg(parent) {
-    for(int i=0 ; i<subs->length ; i++) {
-        Subreddit_t* sub = (Subreddit_t *) subs->data[i];
+GoSubDlgCust::GoSubDlgCust(wxWindow *parent, std::vector<Subreddit*> subs) : GoSubDlg(parent) {
+    for(int i=0 ; i<subs.size() ; i++) {
+        Subreddit* sub =  subs.at(i);
 
-        SubBox->Append(toString(sub->name));
+        SubBox->Append(wxString::FromUTF8(sub->name));
     }
 }
 

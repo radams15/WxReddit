@@ -18,38 +18,32 @@ protected:
     void NewSubBtnPressed( wxCommandEvent& event );
     void AboutBtnPressed( wxCommandEvent& event );
 
-    Reddit_t* reddit;
-    List_t* subs;
+    Reddit* reddit;
+    std::vector<Subreddit*> subs;
     wxString selectedSub;
 
 public:
-    std::vector< Post_t* > posts;
+    std::vector< Post* > posts;
 
-    wxTreeItemId comment_root;
-
-    void NewPostPanel(Post_t* post);
+    void NewPostPanel(Post* post);
 
     void Refresh();
 
-    MainFrameCust( Reddit_t* reddit, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Reddit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 790,549 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+    MainFrameCust( Reddit* reddit, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Reddit"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 790,549 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
-    void AddComment(Comment_t* comment, wxTreeItemId);
-
-    void AddPostMainComment(Comment* comment);
-
-    void LoadPost(Post_t* post);
+    void LoadPost(Post* post);
 };
 
 class PostBoxCust : public PostBox{
 private:
-    Post_t* post;
+    Post* post;
     wxWindow* window;
 protected:
     void GoButtonOnButtonClick( wxCommandEvent& event );
     void ThumbClicked( wxCommandEvent& event );
     void SubClicked( wxHyperlinkEvent& event );
 public:
-    PostBoxCust(wxWindow* parent, wxWindow* window, Post_t* post);
+    PostBoxCust(wxWindow* parent, wxWindow* window, Post* post);
 };
 
 class GoSubDlgCust : public GoSubDlg {
@@ -61,7 +55,7 @@ protected:
     void OkBtnPressed( wxCommandEvent& event );
 
 public:
-    GoSubDlgCust( wxWindow* parent, List_t* subs);
+    GoSubDlgCust( wxWindow* parent, std::vector<Subreddit*> subs);
 
     wxString GetValue();
 

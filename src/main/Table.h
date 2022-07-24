@@ -16,7 +16,7 @@ class Table : public wxGridTableBase{
 
 private:
     std::vector< wxString > headers;
-    std::vector< Post_t* > data;
+    std::vector< Post* > data;
 
     bool Exists(int row, int col);
 
@@ -37,11 +37,11 @@ public:
 
     wxString GetColLabelValue(int col);
 
-    Post_t* Tail();
+    Post* Tail();
 
     void SetValue(int row, int col, const wxString &value);
 
-    void append(Post_t* to_add);
+    void append(Post* to_add);
 
     void set_headers(std::vector<wxString> new_headers);
 

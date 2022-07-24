@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b3)
+// C++ code generated with wxFormBuilder (version 3.10.1-0-g8feb16b)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO *NOT* EDIT THIS FILE!
@@ -16,25 +16,24 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/string.h>
-#include <wx/panel.h>
+#include <wx/statusbr.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
-#include <wx/stattext.h>
-#include <wx/statbmp.h>
-#include <wx/treectrl.h>
-#include <wx/notebook.h>
-#include <wx/statusbr.h>
 #include <wx/toolbar.h>
 #include <wx/menu.h>
 #include <wx/frame.h>
 #include <wx/bmpbuttn.h>
 #include <wx/button.h>
+#include <wx/stattext.h>
 #include <wx/hyperlink.h>
 #include <wx/statline.h>
+#include <wx/panel.h>
 #include <wx/combobox.h>
 #include <wx/dialog.h>
 #include <wx/html/htmlwin.h>
+#include <wx/statbmp.h>
+#include <wx/treectrl.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -64,15 +63,7 @@ class MainFrame : public wxFrame
 		};
 
 		wxBoxSizer* bSizer3;
-		wxNotebook* NoteBook;
-		wxPanel* FeedPanel;
 		wxScrolledWindow* m_scrolledWindow1;
-		wxPanel* PostPanel;
-		wxScrolledWindow* m_scrolledWindow2;
-		wxStaticText* PostTitle;
-		wxStaticBitmap* PostPic;
-		wxStaticText* PostContent;
-		wxTreeCtrl* CommentControl;
 		wxStatusBar* StatusBar1;
 		wxToolBar* m_toolBar1;
 		wxToolBarToolBase* MoreBtn;
@@ -194,6 +185,28 @@ class HtmlDlg : public wxDialog
 		HtmlDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Image Viewer"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 390,242 ), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 
 		~HtmlDlg();
+
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class PostFrame
+///////////////////////////////////////////////////////////////////////////////
+class PostFrame : public wxFrame
+{
+	private:
+
+	protected:
+		wxScrolledWindow* m_scrolledWindow2;
+		wxStaticText* PostTitle;
+		wxStaticBitmap* PostPic;
+		wxStaticText* PostContent;
+		wxTreeCtrl* CommentControl;
+
+	public:
+
+		PostFrame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 725,409 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+
+		~PostFrame();
 
 };
 
