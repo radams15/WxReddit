@@ -9,8 +9,6 @@
 
 #include <cstdio>
 
-extern "C" size_t req_get_dl(const char* url, const char* path, int use_proxy, const char* proxy, void* headers);
-
 #ifdef USE_THREADING
 pthread_mutex_t post_mutex;
 pthread_mutex_t comment_mutex;
@@ -72,15 +70,15 @@ void MainFrameCust::LoadSubs() {
 void MainFrameCust::MoreButtonOnButtonClick(wxCommandEvent &event) {
     Post* prev = posts.at(posts.size()-1);
 
-    wxString fullname = wxString::FromUTF8(prev->fullname());
+    wxString fullname = toString(prev->fullname());
 
     if(selectedSub == wxT("All")){
-        reddit->get_posts_hot(100, fullname.ToStdString(), post_adder, this);
+        reddit->get_posts_hot(100, ToStdString(fullname), post_adder, this);
 
     }else {
-        Subreddit* sub = new Subreddit(reddit, selectedSub.ToStdString());
+        Subreddit* sub = new Subreddit(reddit, ToStdString(selectedSub));
 
-        sub->get_posts("hot", 100, fullname.ToStdString(), post_adder, this);
+        sub->get_posts("hot", 100, ToStdString(fullname), post_adder, this);
     }
 
     Refresh();
@@ -129,7 +127,7 @@ void MainFrameCust::GoSubBtnPressed(wxCommandEvent &event) {
         if(subName == wxT("All")){
             reddit->get_posts_hot(100, "", post_adder, this);
         }else {
-            Subreddit* sub = new Subreddit(reddit, subName.ToStdString());
+            Subreddit* sub = new Subreddit(reddit, ToStdString(subName));
 
             sub->get_posts("hot", 100, "", post_adder, this);
         }
@@ -158,13 +156,13 @@ PostBoxCust::PostBoxCust(wxWindow* parent, wxWindow* window, Post* post) : PostB
     this->post = post;
     this->window = window;
 
-    TitleLabel->SetLabel(wxString::FromUTF8(post->title));
-    AuthorLabel->SetLabel(wxString::FromUTF8(post->author));
-    SubredditLabel->SetLabel(wxString::FromUTF8(post->subreddit->name));
+    TitleLabel->SetLabel(toString(post->title));
+    AuthorLabel->SetLabel(toString(post->author));
+    SubredditLabel->SetLabel(toString(post->subreddit->name));
 
     std::string thumb = post->get_thumb_path();
     if(thumb.length() > 0) {
-        wxBitmap *bmp = GetBmp(wxString::FromUTF8(thumb));
+        wxBitmap *bmp = GetBmp(toString(thumb));
 
         if(bmp != NULL){
             FeedThumb->SetBitmapLabel(*bmp);
@@ -178,7 +176,7 @@ void PostBoxCust::GoButtonOnButtonClick(wxCommandEvent &event) {
 
 void PostBoxCust::ThumbClicked(wxCommandEvent &event) {
     if(post->is_img()) {
-        wxString toOpen = wxString::FromUTF8(post->get_image_path());
+        wxString toOpen = toString(post->get_image_path());
 
         HtmlDlg viewer(this);
 
@@ -196,7 +194,7 @@ GoSubDlgCust::GoSubDlgCust(wxWindow *parent, std::vector<Subreddit*> subs) : GoS
     for(int i=0 ; i<subs.size() ; i++) {
         Subreddit* sub =  subs.at(i);
 
-        SubBox->Append(wxString::FromUTF8(sub->name));
+        SubBox->Append(toString(sub->name));
     }
 }
 

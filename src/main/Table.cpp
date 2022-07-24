@@ -38,15 +38,15 @@ wxString Table::GetValue(int row, int col) {
 
 	switch(col){
 		case 0:
-			return wxString::FromUTF8(post->title);
+			return toString(post->title);
 		case 1:
-			return wxString::FromUTF8(post->author);
+			return toString(post->author);
 		case 2:
-			return wxString::FromUTF8(post->subreddit->name);
+			return toString(post->subreddit->name);
 	}
     }
 
-    return wxString::FromUTF8("NONE");
+    return toString("NONE");
 }
 
 wxString Table::GetColLabelValue(int col) {

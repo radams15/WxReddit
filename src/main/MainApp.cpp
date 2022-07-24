@@ -5,6 +5,8 @@
 #include "MainApp.h"
 #include "MainFrameCust.h"
 
+#include <iostream>
+
 extern "C" void gtk_tweak_setup();
 
 MainApp::MainApp() : wxApp(), client(){

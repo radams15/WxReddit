@@ -19,6 +19,8 @@ wxString toString(std::string in);
 wxBitmap* GetBmp(wxString fileName, int width, int height);
 wxBitmap* GetBmp(wxString fileName);
 
+std::string ToStdString(wxString inp);
+
 const char* toChars(wxString in);
 
 const char* getTmpDir();

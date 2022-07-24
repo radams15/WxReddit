@@ -20,7 +20,11 @@ wxString toString(const char* in){
 
     return out;*/
 
-    return wxString::FromUTF8(in);
+    return wxString::FromUTF8(in, wxString::npos);
+}
+
+std::string ToStdString(wxString inp){
+    return std::string(inp.begin(), inp.end());
 }
 
 wxBitmap* GetBmp(wxString fileName, int width, int height){
